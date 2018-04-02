@@ -21,7 +21,7 @@ export default class Login extends Component{
                   <Input />
                </Item>
 
-                <Button primary full>
+                <Button primary full onPress={this.props.onLoginPress}>
                   <Text> Log In </Text>
                 </Button>
 
