@@ -1,33 +1,24 @@
 import React, { Component } from 'react';
-import {Container, Header, 
-  Content, Form, Item, 
-  Input, Label, Button, Text
-} from 'native-base';
 
+import Login from './Login';
+import Main from './Main';
 
-export default class Login extends Component{
-  render() {
-    return (
-      <Container>
-        <Content>
-            <Form>
-                <Item floatingLabel>
-                  <Label>Username</Label>
-                  <Input />
-                </Item>
+export default class App extends Component {
 
-                <Item floatingLabel last>
-                  <Label>Password</Label>
-                  <Input />
-               </Item>
-
-                <Button primary full>
-                  <Text> Log In </Text>
-                </Button>
-
-            </Form>
-        </Content>
-      </Container>
-    );
+  state = {
+    isLoggedIn: false
   }
+
+  render() {
+
+    if (this.state.isLoggedIn) 
+      return <Main 
+          onLogoutPress={() => this.setState({isLoggedIn: false})}
+        />;
+    else 
+      return <Login 
+          onLoginPress={() => this.setState({isLoggedIn: true})}
+        />;
+  }
+
 }
