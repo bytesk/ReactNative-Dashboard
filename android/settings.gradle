@@ -1,0 +1,3 @@
+rootProject.name = 'reactNativeDashboard'
+
+include ':app'
