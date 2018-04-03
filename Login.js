@@ -3,10 +3,10 @@ import {Container, Header,
   Content, Form, Item, 
   Input, Label, Button, Text, Icon, Left, Right, Title, Body
 } from 'native-base';
-
-
+import {
+  StackNavigator,
+} from 'react-navigation';
 import {View} from 'react-native';
-
   state = {
     username: '',
     password: '',
