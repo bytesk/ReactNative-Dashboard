@@ -28,21 +28,13 @@ import {View} from 'react-native';
 
     render() {
       return (
-        <Container>
+        <Container style={{padding:20}}>
         <Header>
-          <Left>
-            <Button transparent>
-              <Icon name='arrow-back' />
-            </Button>
-          </Left>
+          <Left/>
           <Body>
             <Title>Login</Title>
           </Body>
-          <Right>
-            <Button transparent>
-              <Icon name='menu' />
-            </Button>
-          </Right>
+          <Right />
         </Header>
           <Content>
               <Form>
@@ -66,7 +58,7 @@ import {View} from 'react-native';
                 </Item>
 
 
-                <View style={{margin:15}} />
+                <View style={{margin:20}} />
                   <Button primary full onPress={this.props.onLoginPress}>
                     <Text> Log In </Text>
                   </Button>
