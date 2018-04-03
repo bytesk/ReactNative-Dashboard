@@ -27,18 +27,6 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
       });
     }
   
-    storeToken(responseData){
-      AsyncStorage.setItem(ACCESS_TOKEN, responseData, (err)=> {
-        if(err){
-          console.log("an error");
-          throw err;
-        }
-        console.log("success");
-      }).catch((err)=> {
-          console.log("error is: " + err);
-      });
-    }
-  
     async onLoginPressed() {
       this.setState({showProgress: true})
       try {
@@ -66,6 +54,7 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
             //Handle error
             let error = res;
             throw error;
+            
         }
       } catch(error) {
           this.setState({error: error});
