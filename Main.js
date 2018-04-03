@@ -6,6 +6,12 @@ import {
 	Button
 } from 'react-native';
 
+import { Actions } from 'react-native-router-flux';
+
+const gotoLogin = () => {
+	Actions.login()
+ }
+
 export default class Main extends Component {
 	render() {
 		return (
@@ -16,7 +22,7 @@ export default class Main extends Component {
 				</Text>
 				<View style={{margin:20}} />
 				<Button
-		            onPress={this.props.onLogoutPress}
+					onPress = {gotoLogin}
 		            title="Logout"
 		        />
 		    </ScrollView>

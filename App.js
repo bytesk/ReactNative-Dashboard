@@ -3,6 +3,9 @@ import React, { Component } from 'react';
 import Login from './Login';
 import Main from './Main';
 
+import { Router, Scene } from 'react-native-router-flux'
+
+
 export default class App extends Component {
 
   state = {
@@ -11,14 +14,13 @@ export default class App extends Component {
 
   render() {
 
-    if (this.state.isLoggedIn) 
-      return <Main 
-          onLogoutPress={() => this.setState({isLoggedIn: false})}
-        />;
-    else 
-      return <Login 
-          onLoginPress={() => this.setState({isLoggedIn: true})}
-        />;
+    return(
+        <Router>
+          <Scene key = "root">
+            <Scene key = "login" component = {Login} title = "Login" initial = {true} />
+            <Scene key = "main" component = {Main} title = "Main" />
+          </Scene>
+      </Router>
+    )
   }
-
 }

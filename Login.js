@@ -7,8 +7,10 @@ import {Container, Header,
 
 import {View, TouchableHighlight, AsyncStorage} from 'react-native';
 
-  const ACCESS_TOKEN = 'access_token';
+import { Actions } from 'react-native-router-flux';
 
+  const ACCESS_TOKEN = 'access_token';
+  
   export default class Login extends Component{
     constructor(props) {
       super(props);
@@ -67,6 +69,7 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
             let accessToken = res;
             this.storeToken(accessToken);
             console.log("res token: " + accessToken);
+            Actions.main()
         } else {
             //Handle error
             let error = res;
@@ -80,6 +83,14 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
           this.setState({showProgress: false});
       }
     }
+
+  handleUsername = (text) => {
+      this.setState({ username: text })
+   }
+
+  handlePassword = (text) => {
+      this.setState({ password: text })
+   }
   
 
     render() {
@@ -100,7 +111,7 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
                     <Input
                       ref={component => this.username = component}
                       autoFocus={true}
-                      onChangeText={ (text)=> this.setState({username: text}) }
+                      onChangeText={ this.handleUsername}
                     />
                   </Item>
 
@@ -109,7 +120,7 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
                     <Input
                      	 ref={component => this.password = component}
                        secureTextEntry={true}
-                       onChangeText={ (text)=> this.setState({password: text}) }
+                       onChangeText={ this.handlePassword}
                     />
                 </Item>
 
