@@ -18,13 +18,11 @@ export default class Login extends Component{
 
                 <Item floatingLabel last>
                   <Label>Password</Label>
-                  <Input />
+                  <Input secureTextEntry={true}/>
                </Item>
-
                 <Button primary full onPress={this.props.onLoginPress}>
                   <Text> Log In </Text>
                 </Button>
-
             </Form>
         </Content>
       </Container>
