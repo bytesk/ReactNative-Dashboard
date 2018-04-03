@@ -21,6 +21,36 @@ import {View} from 'react-native';
       username: this.state.username,
       password: this.state.password
     }
+
+      if(this.state.username=='john'&&this.state.password=='123456'){
+        this.setState({
+                isLoggedIn: true
+              });
+            }
+
+            fetch('https://test-mobile.neo-fusion.com/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            'username': 'john',
+            'password': '123456',
+      })
+      
+    }).then((response) => response.json())
+    .then((response) => {
+      if (response.status==200) proceed = true;
+      else this.setState({ message: response.message });
+  })
+    .then(() => {
+        this.setState({ isLoggingIn: false })
+        if (proceed) this.props.onLoginPress();
+    })
+    .catch(err => {
+    this.setState({ message: err.message });
+    this.setState({ isLoggingIn: false })
+    });
   }
 
   export default class Login extends Component{
@@ -31,11 +61,12 @@ import {View} from 'react-native';
         <Container style={{padding:20}}>
         <Header>
           <Left/>
-          <Body>
-            <Title>Login</Title>
-          </Body>
+            <Body>
+              <Title>Login</Title>
+            </Body>
           <Right />
         </Header>
+
           <Content>
               <Form>
                   <Item floatingLabel>
@@ -59,7 +90,7 @@ import {View} from 'react-native';
 
 
                 <View style={{margin:20}} />
-                  <Button primary full onPress={this.props.onLoginPress}>
+                  <Button primary full onPress={this._userLogin}>
                     <Text> Log In </Text>
                   </Button>
 

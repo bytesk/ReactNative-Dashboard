@@ -1,25 +1,33 @@
 import React, { Component } from 'react';
 import {
-	ScrollView,
-	Text,
-	View,
-	Button
+	View
 } from 'react-native';
+import {Container, Header, 
+	Content, Form, Item, 
+	Input, Label, Button, Text, Icon, Left, Right, Title, Body
+  } from 'native-base';
 
 export default class Main extends Component {
 	render() {
 		return (
-			<ScrollView style={{padding: 20}}>
+			<Container style={{padding: 20}}>
+			<Header>
+          <Left/>
+          <Body>
+            <Title>Login</Title>
+          </Body>
+          <Right />
+        </Header>
+		<Content>
 				<Text 
 					style={{fontSize: 27}}>
 					Welcome
 				</Text>
-				<View style={{margin:20}} />
-				<Button
-		            onPress={this.props.onLogoutPress}
-		            title="Logout"
-		        />
-		    </ScrollView>
+				<Button onPress={this.props.onLogoutPress}>
+				<Text> Log Out </Text>
+				</Button>
+			</Content>
+		    </Container>
         )
 	}
 }
