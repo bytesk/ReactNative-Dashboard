@@ -29,7 +29,7 @@ import {View} from 'react-native';
     render() {
       return (
         <Container>
-          <Content>
+          <Content style={{padding:20}} >
               <Form>
                   <Item floatingLabel>
                     <Label>Username</Label>
@@ -51,7 +51,7 @@ import {View} from 'react-native';
                 </Item>
 
 
-                <View style={{margin:15}} />
+                <View style={{margin:20}} />
                   <Button primary full onPress={this.props.onLoginPress}>
                     <Text> Log In </Text>
                   </Button>
