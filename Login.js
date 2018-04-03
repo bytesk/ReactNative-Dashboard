@@ -17,39 +17,56 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
         username: "",
         password: "",   
         error: "",
-        showProgress: false,
       };
     }
 
-    redirect(routeName, accessToken){
-      this.props.navigator.push({
-        name: routeName
-      });
+    async storeToken(accessToken){
+      try{
+        await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
+        this.getToken();
+      }catch(error){
+        console.log("something went wrong");
+      }
+    }
+
+    async getToken(){
+      try{
+        let token =  await AsyncStorage.getItem(ACCESS_TOKEN);
+        console.log("token is : " + token);
+      }catch(error){
+        console.log("something went wrong");
+      }
+    }
+
+    async removeToken(){
+      try{
+        await AsyncStorage.removeItem(ACCESS_TOKEN);
+        this.getToken();
+      }catch(error){
+        console.log("something went wrong");
+      }
     }
   
     async onLoginPressed() {
       this.setState({showProgress: true})
       try {
         let response = await fetch('https://test-mobile.neo-fusion.com/auth/login', {
-                                method: 'POST',
-                                headers: {
-                                  'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                  session:{
-                                    username: this.state.username,
-                                    password: this.state.password,
-                                  }
-                                })
-                              });
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                          'username': this.state.username,
+                          'password': this.state.password,
+                      })
+                    });
         let res = await response.text();
         if (response.status >= 200 && response.status < 300) {
             //Handle success
+            this.setState({error: ""});
             let accessToken = res;
-            console.log("res token: " + accessToken);
-            //On success we will store the access_token in the AsyncStorage
             this.storeToken(accessToken);
-            this.redirect('Main');
+            console.log("res token: " + accessToken);
         } else {
             //Handle error
             let error = res;
@@ -57,6 +74,7 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
             
         }
       } catch(error) {
+          this.removeToken();
           this.setState({error: error});
           console.log("error " + error);
           this.setState({showProgress: false});
