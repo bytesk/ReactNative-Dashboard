@@ -5,56 +5,75 @@ import {Container, Header,
 } from 'native-base';
 
 
-import {View} from 'react-native';
+import {View, TouchableHighlight, AsyncStorage} from 'react-native';
 
-  state = {
-    username: '',
-    password: '',
-    isLoggingIn: false,
-    message: ''
-  }
-
-  _userLogin = () => {
-    this.setState({ isLogginIn: true, message: ''});
-
-    var params = {
-      username: this.state.username,
-      password: this.state.password
-    }
-
-      if(this.state.username=='john'&&this.state.password=='123456'){
-        this.setState({
-                isLoggedIn: true
-              });
-            }
-
-            fetch('https://test-mobile.neo-fusion.com/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            'username': 'john',
-            'password': '123456',
-      })
-      
-    }).then((response) => response.json())
-    .then((response) => {
-      if (response.status==200) proceed = true;
-      else this.setState({ message: response.message });
-  })
-    .then(() => {
-        this.setState({ isLoggingIn: false })
-        if (proceed) this.props.onLoginPress();
-    })
-    .catch(err => {
-    this.setState({ message: err.message });
-    this.setState({ isLoggingIn: false })
-    });
-  }
+  const ACCESS_TOKEN = 'access_token';
 
   export default class Login extends Component{
+    constructor(props) {
+      super(props);
 
+      this.state = { 
+        username: "",
+        password: "",   
+        error: "",
+        showProgress: false,
+      };
+    }
+
+    redirect(routeName, accessToken){
+      this.props.navigator.push({
+        name: routeName
+      });
+    }
+  
+    storeToken(responseData){
+      AsyncStorage.setItem(ACCESS_TOKEN, responseData, (err)=> {
+        if(err){
+          console.log("an error");
+          throw err;
+        }
+        console.log("success");
+      }).catch((err)=> {
+          console.log("error is: " + err);
+      });
+    }
+  
+    async onLoginPressed() {
+      this.setState({showProgress: true})
+      try {
+        let response = await fetch('https://test-mobile.neo-fusion.com/auth/login', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                  session:{
+                                    username: this.state.username,
+                                    password: this.state.password,
+                                  }
+                                })
+                              });
+        let res = await response.text();
+        if (response.status >= 200 && response.status < 300) {
+            //Handle success
+            let accessToken = res;
+            console.log("res token: " + accessToken);
+            //On success we will store the access_token in the AsyncStorage
+            this.storeToken(accessToken);
+            this.redirect('Main');
+        } else {
+            //Handle error
+            let error = res;
+            throw error;
+        }
+      } catch(error) {
+          this.setState({error: error});
+          console.log("error " + error);
+          this.setState({showProgress: false});
+      }
+    }
+  
 
     render() {
       return (
@@ -72,28 +91,29 @@ import {View} from 'react-native';
                   <Item floatingLabel>
                     <Label>Username</Label>
                     <Input
-                      ref={component => this._username = component}
+                      ref={component => this.username = component}
                       autoFocus={true}
-                      onFocus={this.clearUsername}
+                      onChangeText={ (text)=> this.setState({username: text}) }
                     />
                   </Item>
 
                   <Item floatingLabel last>
                     <Label>Password</Label>
                     <Input
-                     	 ref={component => this._password = component}
+                     	 ref={component => this.password = component}
                        secureTextEntry={true}
-                       onFocus={this.clearPassword}
-                       onSubmitEditing={this._userLogin}
+                       onChangeText={ (text)=> this.setState({password: text}) }
                     />
                 </Item>
 
-
                 <View style={{margin:20}} />
-                  <Button primary full onPress={this._userLogin}>
+                  <Button primary full onPress={this.onLoginPressed.bind(this)}>
                     <Text> Log In </Text>
-                  </Button>
+                  </Button> 
 
+                  <Text>
+                      {this.state.error}
+                  </Text>
               </Form>
           </Content>
         </Container>
