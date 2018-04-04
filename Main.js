@@ -11,6 +11,7 @@ import {Container, Header,
 	Input, Label, Button, Text, 
 	Icon, Left, Right, Title, Body,
 	Card, CardItem, Thumbnail,
+	Footer, FooterTab, Tab, Tabs,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -138,9 +139,6 @@ handleSubmit(e){
 					</Form>
 					{this.state.tweets}
 				<View style={{margin:20}} />
-				<Button full onPress={gotoLogin}>
-              <Text> Log Out </Text>
-          </Button> 
 						</Content>
 		    </Container>
         )

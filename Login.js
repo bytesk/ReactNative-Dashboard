@@ -69,7 +69,7 @@ import { Actions } from 'react-native-router-flux';
             let accessToken = res;
             this.storeToken(accessToken);
             console.log("res token: " + accessToken);
-            Actions.main()
+            Actions.tab()
         } else {
             //Handle error
             let error = res;
