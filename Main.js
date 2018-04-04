@@ -17,6 +17,9 @@ import {Container, Header,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
+import ImagePicker from 'react-native-image-picker';
+
+
 const ACCESS_TOKEN = 'access_token';
 const gotoLogin = () => {
 	Actions.login();
@@ -31,8 +34,24 @@ export default class Main extends Component {
 				file:"null",
 				tweet: '',
 				people: [],
+				pickedImaged: null
 		};
+	}
 
+	pickImageHandler = () => {
+		ImagePicker.showImagePicker({title: "Pick an image"}, res => {
+			if(res.didCancel){
+				console.log("User cancelled");
+			}
+			else if(res.error){
+				console.log("Error", res.error);
+			}
+			else{
+				this.setState({
+					pickedImaged: {uri: res.uri}
+				});
+			}
+		});
 	}
 	
 	getTweets(){
@@ -125,11 +144,22 @@ handleSubmit(e){
 		return (
 			<Container style={{padding: 20}}>
 				<Content>
-					<Form onPress = {(e) => this.handleSubmit(e)} encType="multipart/form-data">
+					<Form>
+						
+						<View>
+							<Image source= {this.state.pickedImaged} />
+						</View>
+
+						<Button title = "Pick Image" onPress = {this.pickImageHandler}>
+							<Text> pick </Text>
+						</Button>
+
+
 						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150}/>
 						<Button style = {styles.btnTwit} full>
               <Text>TWIT</Text>
          		 </Button> 
+
 					</Form>
 					{this.state.tweets}
 				</Content>
@@ -142,7 +172,6 @@ handleSubmit(e){
 const styles = StyleSheet.create({
 	twit: {
 		marginBottom:20,
-		height:100
 	},
 	btnTwit: {
 		marginBottom: 20

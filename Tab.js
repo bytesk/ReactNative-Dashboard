@@ -16,7 +16,6 @@ import {Container, Header,
 import { Actions } from 'react-native-router-flux';
 import Main from './Main';
 import Avatar from './Avatar';
-import Login from './Login';
 
 const gotoLogin = () => {
 	Actions.login()
@@ -32,8 +31,14 @@ export class Tabss extends React.Component{
           <Tab heading="Profile">
               <Avatar />
           </Tab>
-          <Tab heading="Logout">
-              {gotoLogin}
+          <Tab heading="Logout" >
+              <Card>
+                  <CardItem>
+            <Button full onPress={gotoLogin}>
+                <Text>Logout</Text>
+            </Button>
+            </CardItem>
+            </Card>
           </Tab>
         </Tabs>
       </Container>
