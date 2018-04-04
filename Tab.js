@@ -24,7 +24,7 @@ export class Tabss extends React.Component{
           <Tab heading="Home">
               <Main />
           </Tab>
-          <Tab heading="Profil">
+          <Tab heading="Profile">
           </Tab>
           <Tab heading="Log Out">
           </Tab>
