@@ -125,9 +125,6 @@ handleSubmit(e){
 		return (
 			<Container style={{padding: 20}}>
 				<Content>
-				<Button full onPress={gotoLogin}>
-              <Text> Log Out </Text>
-          </Button> 
 					<Form>
 						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150}/>
 						<Button style = {styles.btnTwit} full onPress={null}>
@@ -146,7 +143,6 @@ handleSubmit(e){
 const styles = StyleSheet.create({
 	twit: {
 		marginBottom:20,
-		height:100
 	},
 	btnTwit: {
 		marginBottom: 20
