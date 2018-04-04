@@ -68,16 +68,14 @@ import { Actions } from 'react-native-router-flux';
         if (response.status >= 200 && response.status < 300) {
             //Handle success
             this.setState({error: ""});
-            this.storeToken(res);
-            console.log("res token login: " + res);
-            this.getToken();
-
-            Actions.main()
+            let accessToken = res;
+            this.storeToken(accessToken);
+            console.log("res token: " + accessToken);
+            Actions.tab()
         } else {
             //Handle error
             let error = res;
             throw error;
-            
         }
       } catch(error) {
           this.removeToken();

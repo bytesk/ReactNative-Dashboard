@@ -4,13 +4,16 @@ import {
 	View,
 	TextInput,
 	AsyncStorage,
-	Image
+	Image,
+	StyleSheet
 } from 'react-native';
+
 import {Container, Header, 
   Content, Form, Item, 
 	Input, Label, Button, Text, 
 	Icon, Left, Right, Title, Body,
 	Card, CardItem, Thumbnail,
+	Footer, FooterTab, Tab, Tabs,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -138,16 +141,26 @@ handleSubmit(e){
               <Text> Log Out </Text>
           </Button> 
 					<Form>
-						<TextInput multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150}/>
-						<Button full onPress={null}>
+						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150}/>
+						<Button style = {styles.btnTwit} full onPress={null}>
               <Text>TWIT</Text>
           </Button> 
 					</Form>
 					{this.state.tweets}
 				<View style={{margin:20}} />
-
 						</Content>
 		    </Container>
         )
 	}
 }
+
+
+const styles = StyleSheet.create({
+	twit: {
+		marginBottom:20,
+		height:100
+	},
+	btnTwit: {
+		marginBottom: 20
+	}
+})
