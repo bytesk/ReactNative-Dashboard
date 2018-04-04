@@ -10,7 +10,7 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
   const ACCESS_TOKEN = 'access_token';
-  
+
   export default class Login extends Component{
     constructor(props) {
       super(props);
@@ -22,23 +22,25 @@ import { Actions } from 'react-native-router-flux';
       };
     }
 
+
     async storeToken(accessToken){
       try{
         await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
-        this.getToken();
       }catch(error){
-        console.log("something went wrong");
+        console.log("something went wrong store token login");
       }
     }
 
     async getToken(){
       try{
         let token =  await AsyncStorage.getItem(ACCESS_TOKEN);
-        console.log("token is : " + token);
+        console.log("token is login : " + token);
       }catch(error){
-        console.log("something went wrong");
+        console.log("something went wrong login getToken login");
       }
     }
+
+
 
     async removeToken(){
       try{
@@ -66,9 +68,10 @@ import { Actions } from 'react-native-router-flux';
         if (response.status >= 200 && response.status < 300) {
             //Handle success
             this.setState({error: ""});
-            let accessToken = res;
-            this.storeToken(accessToken);
-            console.log("res token: " + accessToken);
+            this.storeToken(res);
+            console.log("res token login: " + res);
+            this.getToken();
+
             Actions.main()
         } else {
             //Handle error
@@ -94,8 +97,14 @@ import { Actions } from 'react-native-router-flux';
   
 
     render() {
+     // const isAuthenticated = this.getToken();
+    //  {isAuthenticated ? 
+    //   Actions.login() :
+    //   Actions.main()
+    // }
       return (
         <Container style={{padding:20}}>
+       
         <Header>
           <Left/>
             <Body>
