@@ -16,19 +16,28 @@ import {Container, Header,
 import { Actions } from 'react-native-router-flux';
 import Main from './Main';
 
+
+const gotoLogin = () => {
+	Actions.login();
+ }
+
+
 export class Tabss extends React.Component{
     render(){
         return(
-            <Container>
-        <Tabs initialPage={0}>
-          <Tab heading="Home">
-              <Main />
-          </Tab>
-          <Tab heading="Profile">
-          </Tab>
-          <Tab heading="Log Out">
-          </Tab>
-        </Tabs>
+        <Container>
+            <Tabs initialPage={0}>
+            <Tab heading="Home">
+                <Main />
+            </Tab>
+            <Tab heading="Profile">
+            </Tab>
+            <Tab heading="Log Out">
+                <Button full onPress={gotoLogin} >
+                    <Text> Log Out </Text>
+                </Button> 
+            </Tab>
+            </Tabs>
       </Container>
         );
     }

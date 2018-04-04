@@ -137,18 +137,17 @@ handleSubmit(e){
 		return (
 			<Container style={{padding: 20}}>
 				<Content>
-				<Button full onPress={gotoLogin}>
-              <Text> Log Out </Text>
-          </Button> 
-					<Form>
+
+					<Form onPress = {(e) => this.handleSubmit(e)} encType="multipart/form-data">
 						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150}/>
-						<Button style = {styles.btnTwit} full onPress={null}>
+						<Button style = {styles.btnTwit} full>
               <Text>TWIT</Text>
           </Button> 
 					</Form>
 					{this.state.tweets}
-				<View style={{margin:20}} />
-						</Content>
+					
+					<View style={{margin:20}} />
+					</Content>
 		    </Container>
         )
 	}
