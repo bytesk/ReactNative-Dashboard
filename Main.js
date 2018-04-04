@@ -9,6 +9,7 @@ import {Container, Header,
 
 export default class Main extends Component {
 	render() {
+		
 		return (
 			<Container style={{padding: 20}}>
 			<Header>

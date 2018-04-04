@@ -1,24 +1,34 @@
 import React, { Component } from 'react';
-
+import {View, TouchableHighlight, AsyncStorage} from 'react-native';
 import Login from './Login';
 import Main from './Main';
-
-export default class App extends Component {
-
-  state = {
-    isLoggedIn: false
+import {
+  StackNavigator,
+} from 'react-navigation';  
+export const isSignedIn = () => {
+  return new Promise((resolve, reject) => {
+    AsyncStorage.getItem('auth')
+      .then(res => {
+        if (res !== null) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      })
+      .catch(err => reject(err));
+  });
+};
+const App = StackNavigator(
+  {
+    Login: {
+      screen: Login,
+    },
+    Main: {
+      screen: Main,
+    },
+  },
+  {
+    initialRouteName:isSignedIn ? 'Main':'Login',
   }
-
-  render() {
-
-    if (this.state.isLoggedIn) 
-      return <Main 
-          onLogoutPress={() => this.setState({isLoggedIn: false})}
-        />;
-    else 
-      return <Login 
-          onLoginPress={() => this.setState({isLoggedIn: true})}
-        />;
-  }
-
-}
+);
+export default App;
