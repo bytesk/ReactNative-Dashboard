@@ -21,7 +21,6 @@ import Login from './Login';
 const gotoLogin = () => {
 	Actions.login()
  }
-
 export class Tabss extends React.Component{
     render(){
         return(
@@ -34,7 +33,7 @@ export class Tabss extends React.Component{
               <Avatar />
           </Tab>
           <Tab heading="Logout">
-              <Login />
+              {gotoLogin}
           </Tab>
         </Tabs>
       </Container>

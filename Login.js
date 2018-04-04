@@ -10,7 +10,7 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
   const ACCESS_TOKEN = 'access_token';
-  
+
   export default class Login extends Component{
     constructor(props) {
       super(props);
@@ -22,23 +22,25 @@ import { Actions } from 'react-native-router-flux';
       };
     }
 
+
     async storeToken(accessToken){
       try{
         await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
-        this.getToken();
       }catch(error){
-        console.log("something went wrong");
+        console.log("something went wrong store token login");
       }
     }
 
     async getToken(){
       try{
         let token =  await AsyncStorage.getItem(ACCESS_TOKEN);
-        console.log("token is : " + token);
+        console.log("token is login : " + token);
       }catch(error){
-        console.log("something went wrong");
+        console.log("something went wrong login getToken login");
       }
     }
+
+
 
     async removeToken(){
       try{
@@ -74,7 +76,6 @@ import { Actions } from 'react-native-router-flux';
             //Handle error
             let error = res;
             throw error;
-            
         }
       } catch(error) {
           this.removeToken();
@@ -94,6 +95,11 @@ import { Actions } from 'react-native-router-flux';
   
 
     render() {
+     // const isAuthenticated = this.getToken();
+    //  {isAuthenticated ? 
+    //   Actions.login() :
+    //   Actions.main()
+    // }
       return (
         <Container style={{padding:20}}>
           <Content>

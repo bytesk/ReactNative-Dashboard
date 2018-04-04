@@ -4,8 +4,10 @@ import {
 	View,
 	TextInput,
 	AsyncStorage,
-	Image
+	Image,
+	StyleSheet
 } from 'react-native';
+
 import {Container, Header, 
   Content, Form, Item, 
 	Input, Label, Button, Text, 
@@ -17,8 +19,9 @@ import { Actions } from 'react-native-router-flux';
 
 const ACCESS_TOKEN = 'access_token';
 const gotoLogin = () => {
-	Actions.login()
+	Actions.login();
  }
+
 
 export default class Main extends Component {
 	constructor(props){
@@ -36,7 +39,7 @@ export default class Main extends Component {
 		fetch('https://test-mobile.neo-fusion.com/data', {
 				method: 'GET',
 				headers: {
-					'Access-Token': 'a55a88a1-313c-4151-b751-e2c2357858de',
+					'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
 				}
 	}).then(results => results.json()).then(data => {let tweets = data.map((item)=>{
 				return(
@@ -89,7 +92,7 @@ handleSubmit(e){
 	fetch('http://test-mobile.neo-fusion.com/data/create', {
 			method: 'POST',
 			headers: {
-				'Access-Token': 'a55a88a1-313c-4151-b751-e2c2357858de',
+				'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
 			},
 			body: form
 }).then((response) => response.json())
@@ -100,7 +103,7 @@ handleSubmit(e){
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						'Access-Token': 'a55a88a1-313c-4151-b751-e2c2357858de',
+						'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
 					},
 					body: JSON.stringify({
 							'summary': this.state.tweet,
@@ -115,14 +118,20 @@ handleSubmit(e){
 
 	e.preventDefault();
 }
+
+
 	render() {
+		//const isAuthenticated = this.getToken();
 		return (
 			<Container style={{padding: 20}}>
 				<Content>
+				<Button full onPress={gotoLogin}>
+              <Text> Log Out </Text>
+          </Button> 
 					<Form>
-						<TextInput multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150}/>
-						<Button full onPress={null}>
-              <Text> Tweet</Text>
+						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150}/>
+						<Button style = {styles.btnTwit} full onPress={null}>
+              <Text>TWIT</Text>
           </Button> 
 					</Form>
 					{this.state.tweets}
@@ -132,3 +141,14 @@ handleSubmit(e){
         )
 	}
 }
+
+
+const styles = StyleSheet.create({
+	twit: {
+		marginBottom:20,
+		height:100
+	},
+	btnTwit: {
+		marginBottom: 20
+	}
+})
