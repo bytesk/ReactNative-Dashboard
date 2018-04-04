@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import {View, TouchableHighlight, AsyncStorage} from 'react-native';
 import Login from './Login';
 import Main from './Main';
 

@@ -104,15 +104,6 @@ import { Actions } from 'react-native-router-flux';
     // }
       return (
         <Container style={{padding:20}}>
-       
-        <Header>
-          <Left/>
-            <Body>
-              <Title>Login</Title>
-            </Body>
-          <Right />
-        </Header>
-
           <Content>
               <Form>
                   <Item floatingLabel>
