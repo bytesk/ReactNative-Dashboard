@@ -62,7 +62,7 @@ export default class Main extends Component {
 				}
 	}).then(results => results.json()).then(data => {let tweets = data.map((item)=>{
 				return(
-						<View>
+				<View>
 					<Card>
 						<CardItem header>
 							<Left>
@@ -74,12 +74,18 @@ export default class Main extends Component {
 							</Left>
 						</CardItem>
 						<CardItem cardBody>
-							<Image style={{width: 50, height: 50}} source={{uri: item.thumbnail_url}}/>
+
 							<Body>
-								<Text>
-									{item.summary}
-								</Text>
+								<Thumbnail source={{uri: item.thumbnail_url}} style={{height: 200, width: 200, flex: 1, marginLeft: 11}}/>
 							</Body>
+						</CardItem>
+					</Card>
+
+					<Card>
+						<CardItem>
+							<Text style = {{marginTop: 15, marginBottom: 5, marginLeft: 11}}>
+									{item.summary}
+							</Text>
 						</CardItem>
 					</Card>
 				</View>
@@ -94,49 +100,127 @@ export default class Main extends Component {
 	this.setState(({tweet: ""}));
 
 }
-componentDidMount() {
-	this.getTweets();
-	
-}
-
-onChangeTweet(e){
-	this.setState({tweet: e.target.value});
-}
-
-handleSubmit(e){
-	let image = document.getElementById("profilePictures").files[0];
-	let form = new FormData();
-	form.append("file", image);
-	console.log( form.get('file'));
-	fetch('http://test-mobile.neo-fusion.com/data/create', {
-			method: 'POST',
-			headers: {
-				'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
-			},
-			body: form
-}).then((response) => response.json())
-.then((data)=> {
-		console.log(data);
+	componentDidMount() {
+		this.getTweets();
 		
-			fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
-					},
-					body: JSON.stringify({
-							'summary': this.state.tweet,
-							'detail': this.state.tweet,
-				})
-		}).then(response => response.json()).then((data =>{
-				this.getTweets();
-		}))
-}).catch((error) => {
-	console.error(error);
-});
+	}
 
-	e.preventDefault();
-}
+	async handleSubmit(e){
+		let image = document.getElementById("profilePictures").files[0];
+		let form = new FormData();
+		form.append("file", image);
+		console.log( form.get('file'));
+		fetch('http://test-mobile.neo-fusion.com/data/create', {
+				method: 'POST',
+				headers: {
+					'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
+				},
+				body: form
+	}).then((response) => response.json())
+	.then((data)=> {
+			console.log(data);
+			
+				fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
+						},
+						body: JSON.stringify({
+								'summary': this.state.tweet,
+								'detail': this.state.tweet,
+					})
+			}).then(response => response.json()).then((data =>{
+					this.getTweets();
+			}))
+	}).catch((error) => {
+		console.error(error);
+	});
+
+		e.preventDefault();
+	}
+
+	async onSubmit() {
+		this.setState({showProgress: true})
+		try {
+			let response = await fetch('http://test-mobile.neo-fusion.com/data/create', {
+										method: 'POST',
+										headers: {
+											'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
+										},
+										body: form
+									}).then((response) => response.json())
+									.then((data)=> {
+											console.log(data);
+											
+												fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
+														method: 'POST',
+														headers: {
+															'Content-Type': 'application/json',
+															'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
+														},
+														body: JSON.stringify({
+																'summary': this.state.tweet,
+																'detail': this.state.tweet,
+													})
+											}).then(response => response.json()).then((data =>{
+													this.getTweets();
+											}))
+									}).catch((error) => {
+										console.error(error);
+									});
+
+			let res = await response.text();
+			if (response.status >= 200 && response.status < 300) {
+					//Handle success
+					this.setState({error: ""});
+					let accessToken = res;
+					this.storeToken(accessToken);
+					console.log("res token: " + accessToken);
+					Actions.tab()
+			} else {
+					//Handle error
+					let error = res;
+					throw error;
+			}
+		} catch(error) {
+				console.log("error " + error);
+		}
+	}
+
+	async onSubmitNew() {
+		try {
+			let response = await fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
+										method: 'POST',
+										headers: {
+											'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
+											'Content-Type': 'application/json',
+										},
+										body: JSON.stringify({
+												'summary': this.state.tweet,
+												'detail': this.state.tweet,
+										})
+									});
+			let res = await response.text();
+			if (response.status >= 200 && response.status < 300) {
+					//Handle success
+					this.setState({error: ""});
+					let accessToken = res;
+					this.storeToken(accessToken);
+					console.log("res token: " + accessToken);
+					Actions.tab()
+			} else {
+					//Handle error
+					let error = res;
+					throw error;
+			}
+		} catch(error) {
+				this.removeToken();
+				this.setState({error: error});
+				console.log("error " + error);
+				this.setState({showProgress: false});
+		}
+	}
 
 
 	render() {
@@ -144,19 +228,20 @@ handleSubmit(e){
 		return (
 			<Container style={{padding: 20}}>
 									
-						<View>
-							<Image source= {this.state.pickedImaged} style={styles.previewImage}  />
-						</View>
+				<View>
+					<Image source= {this.state.pickedImaged} style={styles.previewImage}  />
+				</View>
 				<Content>
 					<Form>
-
-						<Button title = "Pick Image" onPress = {this.pickImageHandler}>
+						<Button title = "Pick Image" onPress = {this.pickImageHandler} id="profilePictures" name="file" ref="file">
 							<Text> pick </Text>
 						</Button>
 
 
-						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150}/>
-						<Button style = {styles.btnTwit} full>
+						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" 
+							autoGrow={true} maxLength={150}
+						/>
+						<Button style = {styles.btnTwit} full onPress = {this.handleSubmit.bind(this)} >
               <Text>TWIT</Text>
          		 </Button> 
 
@@ -179,5 +264,9 @@ const styles = StyleSheet.create({
 	previewImage: {
 		width: "50%",
 		height: "50%"
+	},
+	imgPush: {
+		height: "80%",
+		width: "80%"
 	}
 })
