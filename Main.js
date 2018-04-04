@@ -143,12 +143,12 @@ handleSubmit(e){
 		//const isAuthenticated = this.getToken();
 		return (
 			<Container style={{padding: 20}}>
+									
+						<View>
+							<Image source= {this.state.pickedImaged} style={styles.previewImage}  />
+						</View>
 				<Content>
 					<Form>
-						
-						<View>
-							<Image source= {this.state.pickedImaged} />
-						</View>
 
 						<Button title = "Pick Image" onPress = {this.pickImageHandler}>
 							<Text> pick </Text>
@@ -175,5 +175,9 @@ const styles = StyleSheet.create({
 	},
 	btnTwit: {
 		marginBottom: 20
+	},
+	previewImage: {
+		width: "50%",
+		height: "50%"
 	}
 })
