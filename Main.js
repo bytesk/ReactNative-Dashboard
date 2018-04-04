@@ -71,18 +71,6 @@ export default class Main extends Component {
 	});
 	this.setState(({tweet: ""}));
 
-	//rekomendasi friends 
-	fetch('https://randomuser.me/api/?results=5')
-		.then(results => results.json())
-		.then(data => {let people = data.results.map((item, index)=>{
-		return(
-				<View />
-		);
-		});
-		this.setState({
-				people: people,
-		});
-})
 }
 componentDidMount() {
 	this.getTweets();
