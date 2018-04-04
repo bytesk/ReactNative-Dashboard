@@ -3,79 +3,99 @@ import {Container, Header,
   Content, Form, Item, 
   Input, Label, Button, Text, Icon, Left, Right, Title, Body
 } from 'native-base';
-import { StackNavigator } from 'react-navigation';
+
 
 import {View, TouchableHighlight, AsyncStorage} from 'react-native';
 
-  export default class Login extends Component{
-    constructor(props){
-      super(props);
-      this.state={
-        isLoggedIn: false,
-        username: '',
-        password: '',
-        accessToken: ''
-      };
-      this.onChangeUsername = this.onChangeUsername.bind(this);
-      this.onChangePassword = this.onChangePassword.bind(this);
-      this.handleClick = this.handleClick.bind(this);
-    }
-    onChangeUsername(event){
-      this.setState({
-        username: event.target.value,
-      });
-    }
-    onChangePassword(event){
-      this.setState({
-        password: event.target.value,
-      });
-    }
-  
-    handleClick(){
-      if(this.state.username=='john'&&this.state.password=='123456'){
-        this.setState({
-                isLoggedIn: true
-              });
-              AsyncStorage.setItem('auth', 'true');
-            }
-  
-            fetch('https://test-mobile.neo-fusion.com/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            'username': 'john',
-            'password': '123456',
-      })
-      
-    }).then((response) => response.json())
-    .then((data) => {
-      AsyncStorage.setItem('access', JSON.stringify(data).substring(17,53))
-    })
-    .catch((error) => {
-      console.error(error);
+import { Actions } from 'react-native-router-flux';
 
-    });
-    
+  const ACCESS_TOKEN = 'access_token';
+  
+  export default class Login extends Component{
+    constructor(props) {
+      super(props);
+
+      this.state = { 
+        username: "",
+        password: "",   
+        error: "",
+      };
     }
-    isAuthenticated() {
-      const token =  AsyncStorage.getItem('access');
-      return token && token.length > 10;
-  }
+
+    async storeToken(accessToken){
+      try{
+        await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
+        this.getToken();
+      }catch(error){
+        console.log("something went wrong");
+      }
+    }
+
+    async getToken(){
+      try{
+        let token =  await AsyncStorage.getItem(ACCESS_TOKEN);
+        console.log("token is : " + token);
+      }catch(error){
+        console.log("something went wrong");
+      }
+    }
+
+    async removeToken(){
+      try{
+        await AsyncStorage.removeItem(ACCESS_TOKEN);
+        this.getToken();
+      }catch(error){
+        console.log("something went wrong");
+      }
+    }
+  
+    async onLoginPressed() {
+      this.setState({showProgress: true})
+      try {
+        let response = await fetch('https://test-mobile.neo-fusion.com/auth/login', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                          'username': this.state.username,
+                          'password': this.state.password,
+                      })
+                    });
+        let res = await response.text();
+        if (response.status >= 200 && response.status < 300) {
+            //Handle success
+            this.setState({error: ""});
+            let accessToken = res;
+            this.storeToken(accessToken);
+            console.log("res token: " + accessToken);
+            Actions.main()
+        } else {
+            //Handle error
+            let error = res;
+            throw error;
+            
+        }
+      } catch(error) {
+          this.removeToken();
+          this.setState({error: error});
+          console.log("error " + error);
+          this.setState({showProgress: false});
+      }
+    }
+
+  handleUsername = (text) => {
+      this.setState({ username: text })
+   }
+
+  handlePassword = (text) => {
+      this.setState({ password: text })
+   }
   
 
     render() {
       return (
         <Container style={{padding:20}}>
-        <Header>
-          <Left/>
-            <Body>
-              <Title>Login</Title>
-            </Body>
-          <Right />
-        </Header>
-
           <Content>
               <Form>
                   <Item floatingLabel>
@@ -83,7 +103,7 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
                     <Input
                       ref={component => this.username = component}
                       autoFocus={true}
-                      onChangeText={()=>this.onChangeUsername}
+                      onChangeText={ this.handleUsername}
                     />
                   </Item>
 
@@ -92,15 +112,18 @@ import {View, TouchableHighlight, AsyncStorage} from 'react-native';
                     <Input
                      	 ref={component => this.password = component}
                        secureTextEntry={true}
-                       onChangeText={()=>this.onChangePassword}
+                       onChangeText={ this.handlePassword}
                     />
                 </Item>
 
                 <View style={{margin:20}} />
-                <Button primary full onPress={this.handleClick}>
+                  <Button primary full onPress={this.onLoginPressed.bind(this)}>
                     <Text> Log In </Text>
-                  </Button>
-                  
+                  </Button> 
+
+                  <Text>
+                      {this.state.error}
+                  </Text>
               </Form>
           </Content>
         </Container>

@@ -2,33 +2,25 @@ import React, { Component } from 'react';
 import {View, TouchableHighlight, AsyncStorage} from 'react-native';
 import Login from './Login';
 import Main from './Main';
-import {
-  StackNavigator,
-} from 'react-navigation';  
-export const isSignedIn = () => {
-  return new Promise((resolve, reject) => {
-    AsyncStorage.getItem('auth')
-      .then(res => {
-        if (res !== null) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      })
-      .catch(err => reject(err));
-  });
-};
-const App = StackNavigator(
-  {
-    Login: {
-      screen: Login,
-    },
-    Main: {
-      screen: Main,
-    },
-  },
-  {
-    initialRouteName:isSignedIn ? 'Main':'Login',
+
+import { Router, Scene } from 'react-native-router-flux'
+
+
+export default class App extends Component {
+
+  state = {
+    isLoggedIn: false
   }
-);
-export default App;
+
+  render() {
+
+    return(
+        <Router>
+          <Scene key = "root">
+            <Scene key = "login" component = {Login} title = "Login" initial = {true} />
+            <Scene key = "main" component = {Main} title = "Main" />
+          </Scene>
+      </Router>
+    )
+  }
+}
