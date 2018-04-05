@@ -17,9 +17,18 @@ import { Actions } from 'react-native-router-flux';
 import Main from './Main';
 import Avatar from './Avatar';
 
-const gotoLogin = () => {
-	Actions.login()
- }
+export class Logout extends React.Component{
+    componentDidMount(){
+        Actions.login();
+    }
+    render(){
+        return(
+            <View>
+                <Text>asd</Text>
+            </View>
+        );
+    }
+}
 export class Tabss extends React.Component{
     render(){
         return(
@@ -32,13 +41,7 @@ export class Tabss extends React.Component{
               <Avatar />
           </Tab>
           <Tab heading="Logout" >
-              <Card>
-                  <CardItem>
-            <Button full onPress={gotoLogin}>
-                <Text>Logout</Text>
-            </Button>
-            </CardItem>
-            </Card>
+              <Logout />
           </Tab>
         </Tabs>
       </Container>

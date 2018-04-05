@@ -104,7 +104,7 @@ onChangeTweet(e){
 }
 
 handleSubmit(e){
-	let image = document.getElementById("profilePictures").files[0];
+	let image = this.state.pickedImaged;
 	let form = new FormData();
 	form.append("file", image);
 	console.log( form.get('file'));
@@ -155,8 +155,8 @@ handleSubmit(e){
 						</Button>
 
 
-						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150}/>
-						<Button style = {styles.btnTwit} full>
+						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150} onChange={()=>this.onChangeTweet}/>
+						<Button style = {styles.btnTwit} onPress={this.handleSubmit} full>
               <Text>TWIT</Text>
          		 </Button> 
 
