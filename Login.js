@@ -34,24 +34,17 @@ import { Actions } from 'react-native-router-flux';
 
     saveData(accToken){
       let token = accToken;
-      AsyncStorage.setItem('token', token)
-
-      if(this.displayData === ""){
-        alert("save fail");
-      }
-      else
-      {
-        alert("save sukses");
-      }
+      AsyncStorage.setItem('token', JSON.stringify(token).substring(17,53))
+      console.log("Substring :"+this.getToken );
     }
 
     getToken = async () => {
       try{
         let token =  await AsyncStorage.getItem('token');
-        return token && token.length > 15;
-        alert("token in login" + token);
+        return token;
+        console.log("token in login" + token);
       }catch(error){
-        alert(error);
+        console.log(error);
       }
     }
 

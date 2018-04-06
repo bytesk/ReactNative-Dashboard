@@ -67,7 +67,8 @@ export default class Main extends Component {
 		fetch('https://test-mobile.neo-fusion.com/data', {
 				method: 'GET',
 				headers: {
-					'Access-Token': AsyncStorage.getItem('token')
+					'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
+					//'Access-Token': AsyncStorage.getItem('token')
 				}
 	}).then(results => results.json()).then(data => {let tweets = data.map((item)=>{
 				return(
@@ -105,7 +106,7 @@ export default class Main extends Component {
 }
 componentDidMount() {
 	this.getTweets();
-	
+	console.log("Main"+this.getToken);
 }
 
 onChangeTweet(e){
@@ -115,9 +116,9 @@ onChangeTweet(e){
 getToken = async () => {
 	try{
 	  let token =  await AsyncStorage.getItem('token');
-	  return token && token.length > 10;
+	  return token;
 	}catch(error){
-	  alert(error);
+	  console.log(error);
 	}
   }
 
@@ -135,7 +136,8 @@ handleSubmit(e){
 	fetch('http://test-mobile.neo-fusion.com/data/create', {
 			method: 'POST',
 			headers: {
-				'Access-Token': AsyncStorage.getItem('token')
+				//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
+				'Access-Token':this.getToken
 			},
 			body: form,
 }).then((response) => response.json())
@@ -146,7 +148,8 @@ handleSubmit(e){
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						'Access-Token':  AsyncStorage.getItem('token')
+						//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
+						'Access-Token': this.getToken
 					},
 					body: JSON.stringify({
 							'summary': this.state.tweet,
@@ -164,11 +167,11 @@ handleSubmit(e){
 
 
 	render() {
-		// const isAuthenticated = this.getToken();
-		// {!isAuthenticated ? 
-		// 	Actions.login() :
-		// 	Actions.tab()
-		//   }
+		const isAuthenticated = this.getToken();
+		{!isAuthenticated ? 
+			Actions.login() :
+			Actions.tab()
+		  }
 		return (
 			<Container style={{padding: 20}}>
 									

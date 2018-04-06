@@ -18,94 +18,85 @@ import Main from './Main';
 import Avatar from './Avatar';
 
 export class Logout extends React.Component{
-    componentDidMount(){
-      this._userLogout();
+  componentDidMount(){
+    this._userLogout();
+    console.log(this.getToken);
+  }
+  getToken = async () => {
+    try{
+      let token =  await AsyncStorage.getItem('token');
+      return token;
+    }catch(error){
+      console.log(error);
     }
-    removeToken2 = async () => {
-        try{
-          let token =  await AsyncStorage.removeItem('token');
-          return token && token.length > 10;
-        }catch(error){
-          alert(error);
-        }
-      }
-
-
-
-
-    async removeToken(){
-        try{
-          await AsyncStorage.removeItem('token');
-        }catch(error){
-          console.log("something went wrong");
-        }
-      }
-
-
-    render(){
-        return(
-            <View>
-            </View>
-        );
+  }
+  removeToken = async () => {
+    try{
+      let token =  await AsyncStorage.removeItem('token');
+      return token;
+    }catch(error){
+      console.log(error);
     }
+  }
+  async _userLogout() {
+    try {
+     // await AsyncStorage.removeItem('token');
+      //this.logOut;
+      this.removeToken();
+      //this.getToken();
+      Actions.login();
+
+
+    } catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
+  }
+  
+
+  render(){
+    return <View />
+  }
 }
 
 export class Tabss extends React.Component{
-
-
-    
-    authClearStoragee(){
-        return dispatch => {
-            AsyncStorage.removeItem('token');
-            alert("sukses clear token");
-        }
+  componentDidMount(){
+    console.log(this.getToken);
+  }
+  getToken = async () => {
+    try{
+      let token =  await AsyncStorage.getItem('token');
+      return token;
+    }catch(error){
+      console.log(error);
     }
-
-    logOut(){
-        AsyncStorage.setItem('token', "")
-      }
-
-    getToken = async () => {
-        try{
-          let token =  await AsyncStorage.getItem('token');
-          //alert(token);
-          return token && token.length > 10;
-        }catch(error){
-          alert(error);
-        }
-      }
-    
-    async _userLogout() {
-        try {
-         // await AsyncStorage.removeItem('token');
-          //this.logOut;
-          //this.authClearStoragee();
-          alert("Logout Success!");
-          Actions.login();
-          this.getToken();
-
-        } catch (error) {
-          console.log('AsyncStorage error: ' + error.message);
-        }
-      }
-
+  }
+  isAuthenticated = ()=>{
+    if(this.getToken==null){
+      return false;
+    }else{
+      return true;
+    }
+  }
     render(){
-        const isAuthenticated = this.getToken();
-		{!isAuthenticated ? 
-			Actions.login() :
-			Actions.tab()
-		  }
+        
         return(
             <Container>
+	
         <Tabs initialPage={0}>
           <Tab heading="Home">
-              <Main />
+          {!this.isAuthenticated ? <Logout /> : 
+                    <Main />
+            }
           </Tab>
           <Tab heading="Profile">
-              <Avatar />
+          {!this.isAuthenticated ? <Logout /> : 
+                    <Avatar />
+            }
+              
           </Tab>
-          <Tab heading="Logout" >
-          </Tab>
+                <Tab heading="Logout" >
+                <Logout />
+                 </Tab>
         </Tabs>
       </Container>
         );
