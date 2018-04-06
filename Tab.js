@@ -18,9 +18,29 @@ import Main from './Main';
 import Avatar from './Avatar';
 
 const gotoLogin = () => {
+    removeToken();
 	Actions.login()
  }
+
+
+ 
 export class Tabss extends React.Component{
+
+    componentDidMount(){
+        this.removeToken();
+        Actions.login();
+    }
+
+    async removeToken(){
+        try{
+            Actions.login();
+            console.log("token is remove login" + this.getToken())
+            await AsyncStorage.removeItem(ACCESS_TOKEN);
+        }catch(error){
+            console.log("something went wrong");
+        }
+    }
+
     render(){
         return(
             <Container>
@@ -34,7 +54,7 @@ export class Tabss extends React.Component{
           <Tab heading="Logout" >
               <Card>
                   <CardItem>
-            <Button full onPress={gotoLogin}>
+            <Button full >
                 <Text>Logout</Text>
             </Button>
             </CardItem>

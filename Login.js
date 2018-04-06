@@ -40,12 +40,22 @@ import { Actions } from 'react-native-router-flux';
       }
     }
 
-
+      getToken2 = () =>{
+        AsyncStorage.getItem(ACCESS_TOKEN)
+        .then((token) =>
+            {
+                console.log("tokennya2 = "+token);
+            }
+        ).catch((error) =>
+            {
+                console.log("erorr token2 = "+error);
+            });
+     }
 
     async removeToken(){
       try{
+        console.log("token is remove login" + this.getToken())
         await AsyncStorage.removeItem(ACCESS_TOKEN);
-        this.getToken();
       }catch(error){
         console.log("something went wrong");
       }
@@ -70,7 +80,11 @@ import { Actions } from 'react-native-router-flux';
             this.setState({error: ""});
             let accessToken = res;
             this.storeToken(accessToken);
+            //console.tron.log(accessToken);
             console.log("res token: " + accessToken);
+            this.getToken();
+            this.getToken2();
+            //this.removeToken();
             Actions.tab()
         } else {
             //Handle error
@@ -81,7 +95,6 @@ import { Actions } from 'react-native-router-flux';
           this.removeToken();
           this.setState({error: error});
           console.log("error " + error);
-          this.setState({showProgress: false});
       }
     }
 
@@ -95,10 +108,10 @@ import { Actions } from 'react-native-router-flux';
   
 
     render() {
-     // const isAuthenticated = this.getToken();
-    //  {isAuthenticated ? 
+    //  const isAuthenticated = null;
+    // {isAuthenticated ? 
     //   Actions.login() :
-    //   Actions.main()
+    //   Actions.tab()
     // }
       return (
         <Container style={{padding:20}}>

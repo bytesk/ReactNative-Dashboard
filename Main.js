@@ -102,8 +102,32 @@ export default class Main extends Component {
 }
 	componentDidMount() {
 		this.getTweets();
-		
+		this.getToken2();
+		this.getToken();
 	}
+
+	
+    async getToken(){
+		try{
+		  let token =  await AsyncStorage.getItem(ACCESS_TOKEN);
+		  console.log("token is main1 : " + token);
+		}catch(error){
+		  console.log("something went wrong login getToken login");
+		}
+	  }
+
+	  getToken2 = () =>{
+        AsyncStorage.getItem(ACCESS_TOKEN)
+        .then((token) =>
+            {
+                console.log("tokennya2 main = "+token);
+            }
+        ).catch((error) =>
+            {
+                console.log("erorr token2 main = "+error);
+            });
+     }
+
 
 	async handleSubmit(e){
 		let image = document.getElementById("profilePictures").files[0];
@@ -215,7 +239,7 @@ export default class Main extends Component {
 					throw error;
 			}
 		} catch(error) {
-				this.removeToken();
+				//this.removeToken();
 				this.setState({error: error});
 				console.log("error " + error);
 				this.setState({showProgress: false});
@@ -224,7 +248,11 @@ export default class Main extends Component {
 
 
 	render() {
-		//const isAuthenticated = this.getToken();
+		// const isAuthenticated = this.getToken();
+		// {!isAuthenticated ? 
+		// 	Actions.login() :
+		// 	Actions.tab()
+		//   }
 		return (
 			<Container style={{padding: 20}}>
 									
