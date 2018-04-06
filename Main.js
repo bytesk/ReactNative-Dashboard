@@ -38,7 +38,7 @@ export default class Main extends Component {
 				file:"null",
 				tweet: '',
 				people: [],
-				pickedImaged: ''
+				pickedImaged: null,
 		};
 		this.pickImageHandler = this.pickImageHandler.bind(this);
 		this.onChangeTweet = this.onChangeTweet.bind(this);
@@ -74,7 +74,7 @@ export default class Main extends Component {
 				}
 	}).then(results => results.json()).then(data => {let tweets = data.map((item)=>{
 				return(
-						<View>
+						<View key={item.id}>
 					<Card>
 						<CardItem header>
 							<Left>
@@ -117,7 +117,8 @@ onChangeTweet(e){
 getToken = async () => {
 	try{
 	  let token =  await AsyncStorage.getItem('token');
-	  alert(token);
+	  console.log(token);
+	  return token;
 	}catch(error){
 	  alert(error);
 	}
@@ -167,16 +168,23 @@ handleSubmit(e){
 	e.preventDefault();
 }
 
-
+isAuthenticated = () =>{
+    if(this.getToken==''){
+      return false;
+    }else if(this.getToken==null){
+      return false;
+    }else{
+      return true;
+    }
+  }
 	render() {
-		const isAuthenticated = this.getToken();
-		{!isAuthenticated ? 
-			Actions.login() :
-			Actions.tab()
-		  }
+		
 		return (
 			<Container style={{padding: 20}}>
-									
+						{this.isAuthenticated ? 
+			Actions.tab() :
+			Actions.login()
+		  }			
 						<View>
 							<Image source={{uri: this.state.pickedImaged}} style={styles.previewImage}  />
 						</View>
@@ -184,15 +192,12 @@ handleSubmit(e){
 					<Form>
 
 						<Button title = "Pick Image" onPress = {this.pickImageHandler}>
-							<Text> pick </Text>
+							<Text> + </Text>
 						</Button>
 
 						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150} onChange={()=>this.onChangeTweet}/>
 						<Button style = {styles.btnTwit} onPress={this.handleSubmit} full>
               <Text>TWIT</Text>
-         		 </Button> 
-				  <Button style = {styles.btnTwit} onPress={this.getToken}>
-              <Text>GETTOKEN</Text>
          		 </Button> 
 					</Form>
 					{this.state.tweets}

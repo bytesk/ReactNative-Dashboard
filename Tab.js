@@ -71,18 +71,25 @@ export class Tabss extends React.Component{
         try{
           let token =  await AsyncStorage.getItem('token');
           alert(token);
-
+          return token;
         }catch(error){
           alert(error);
         }
       }
-
+      isAuthenticated = () =>{
+        if(this.getToken==''){
+          return false;
+        }else if(this.getToken==null){
+          return false;
+        }else{
+          return true;
+        }
+      }
     render(){
-        const isAuthenticated = this.getToken();
 
         return(
             <Container>
-            {!isAuthenticated ? 
+            {!this.isAuthenticated ? 
 			Actions.login() :
 	
         <Tabs initialPage={0}>
@@ -93,9 +100,7 @@ export class Tabss extends React.Component{
               <Avatar />
           </Tab>
           <Tab heading="Logout" >
-                <Button primary full onPress={this.removeToken2}>
-                    <Text> Logout </Text>
-                </Button> 
+                <Logout />
           </Tab>
         </Tabs>
         	  }

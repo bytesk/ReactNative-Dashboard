@@ -34,7 +34,7 @@ import { Actions } from 'react-native-router-flux';
 
     saveData(accToken){
       let token = accToken;
-      AsyncStorage.setItem('token', JSON.stringify(token).substring(17,53))
+      AsyncStorage.setItem('token', JSON.stringify(token).substring(21,5))
 
       if(this.displayData === ""){
         alert("save fail");
@@ -44,11 +44,15 @@ import { Actions } from 'react-native-router-flux';
         alert("save sukses");
       }
     }
-
+componentDidMount(){
+  
+}
     getToken = async () => {
       try{
-          await AsyncStorage.getItem('token');
-        //alert("token in login" + token);
+         let token = await AsyncStorage.getItem('token');
+        alert("token in login" + token);
+        alert(this.isAuthenticated);
+        return token;
       }catch(error){
         alert(error);
       }
@@ -103,22 +107,18 @@ import { Actions } from 'react-native-router-flux';
   handlePassword = (text) => {
       this.setState({ password: text })
    }
-  
-
+  isAuthenticated = () =>{
+    if(this.getToken==''){
+      return false;
+    }else if(this.getToken==null){
+      return false;
+    }else{
+      return true;
+    }
+  }
     render() {
-       const isAuthenticated = this.getToken;
-      
-      // const isAuthenticated = this.getToken;
-      // {isAuthenticated == "logout" ? 
-      //    Actions.login() :
-      //    Actions.tab()
-      // }
       return (
         <Container style={{padding:20}}>
-        {isAuthenticated ? 
-         Actions.tab() :
-         Actions.login()
-      }
 
           <Content>
               <Form>
