@@ -26,7 +26,7 @@ const gotoLogin = () => {
 	title: 'Pick an Image',
 	storageOptions: {
 	  skipBackup: true,
-	  path: 'images'
+	  returnBase64Image: true,
 	}
   };
 
@@ -40,6 +40,9 @@ export default class Main extends Component {
 				people: [],
 				pickedImaged: ''
 		};
+		this.pickImageHandler = this.pickImageHandler.bind(this);
+		this.onChangeTweet = this.onChangeTweet.bind(this);
+		this.getTweets = this.getTweets.bind(this);
 	}
 
 	pickImageHandler = () => {
@@ -116,7 +119,7 @@ handleSubmit(e){
 		type: 'image/jpeg',
 		name: 'photo.jpg',
 	};
-	console.log(image);
+	console.log(image.uri);
 	let form = new FormData();
 	form.append("file", image);
 	console.log( form.get('file'));
