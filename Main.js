@@ -39,7 +39,7 @@ export default class Main extends Component {
 				file:"null",
 				tweet: '',
 				people: [],
-				pickedImaged: ''
+				pickedImaged: null,
 		};
 		this.pickImageHandler = this.pickImageHandler.bind(this);
 		this.onChangeTweet = this.onChangeTweet.bind(this);
@@ -64,18 +64,23 @@ export default class Main extends Component {
 		});
 	}
 	
-	getTweets(){
+	async getTweets(){
+		let token = await AsyncStorage.getItem('access_token');
+		tokenJSON = JSON.parse(token);
+		console.log("token getTweets = "+tokenJSON.access_token);
 		fetch('https://test-mobile.neo-fusion.com/data', {
 				method: 'GET',
 				headers: {
-					'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
+					//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
 					//'Access-Token': ACCESS_TOKEN
 					//'Access-Token': localStorage.getItem('access'),
 					//'Access-Token': this.getToken
+					//'Access-Token': AsyncStorage.getItem('token')
+					'Access-Token': tokenJSON.access_token,
 				}
 	}).then(results => results.json()).then(data => {let tweets = data.map((item)=>{
 				return(
-						<View>
+					<View key={item.id}>
 					<Card>
 						<CardItem header>
 							<Left>
@@ -109,7 +114,6 @@ export default class Main extends Component {
 }
 componentDidMount() {
 	this.getTweets();
-	
 }
 
 onChangeTweet(e){
@@ -121,12 +125,16 @@ getToken = async () => {
 	  let token =  await AsyncStorage.getItem('token');
 	  //ACCESS_TOKEN = token;
 	  //alert("get token main" + ACCESS_TOKEN);
+	  console.log(token);
+	  return token;
 	}catch(error){
 	  alert(error);
 	}
   }
 
-handleSubmit(e){
+async handleSubmit(e){
+	let token = await AsyncStorage.getItem('access_token');
+	tokenJSON = JSON.parse(token);
 	console.log(this.state.pickedImaged);
 	const image = {
 		uri: this.state.pickedImaged,
@@ -141,7 +149,8 @@ handleSubmit(e){
 			method: 'POST',
 			headers: {
 				//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
-				'Access-Token': this.getToken
+				//'Access-Token': this.getToken
+				'Access-Token': tokenJSON.access_token,
 			},
 			body: form,
 }).then((response) => response.json())
@@ -154,7 +163,8 @@ handleSubmit(e){
 						'Content-Type': 'application/json',
 						//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
 						//'Access-Token': AsyncStorage.getItem('token')
-						'Access-Token': this.getToken
+						//'Access-Token': this.getToken
+						'Access-Token': tokenJSON.access_token,
 					},
 					body: JSON.stringify({
 							'summary': this.state.tweet,
@@ -170,16 +180,23 @@ handleSubmit(e){
 	e.preventDefault();
 }
 
-
+isAuthenticated = () =>{
+    if(this.getToken==''){
+      return false;
+    }else if(this.getToken==null){
+      return false;
+    }else{
+      return true;
+    }
+  }
 	render() {
-		const isAuthenticated = this.getToken();
-		{!isAuthenticated ? 
-			Actions.login() :
-			Actions.tab()
-		  }
+		
 		return (
 			<Container style={{padding: 20}}>
-									
+						{this.isAuthenticated ? 
+			Actions.tab() :
+			Actions.login()
+		  }			
 						<View>
 							<Image source={{uri: this.state.pickedImaged}} style={styles.previewImage}  />
 						</View>
@@ -187,23 +204,13 @@ handleSubmit(e){
 					<Form>
 
 						<Button title = "Pick Image" onPress = {this.pickImageHandler}>
-							<Text> pick </Text>
-						</Button>
-
-						<Button onPress = {this.getToken}>
-							<Text> TKN </Text>
+							<Text> + </Text>
 						</Button>
 
 						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150} onChange={()=>this.onChangeTweet}/>
 						<Button style = {styles.btnTwit} onPress={this.handleSubmit} full>
               <Text>TWIT</Text>
          		 </Button> 
-
-		
-
-				  
-  
-
 					</Form>
 					{this.state.tweets}
 				</Content>

@@ -7,7 +7,6 @@ import {Container, Header,
 
 import {View, TouchableHighlight, AsyncStorage} from 'react-native';
 import { BackHandler } from 'react-native'
-
 import { Actions } from 'react-native-router-flux';
 
   const ACCESS_TOKEN = 'access_token';
