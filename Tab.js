@@ -55,22 +55,19 @@ export class Tabss extends React.Component{
     });
   }
     render(){
-        const isAlreadyAuthenticated = this.checkLogin();
         return(
         <Container>
-        {/* {!isAlreadyAuthenticated ?
-        Actions.login() : */}
             <Tabs initialPage={0}>
                 <Tab heading="Home">
                     <Main />
                 </Tab>
 
-            <Tab heading="Profile">
-                <Avatar />
-            </Tab>
-            <Tab heading="Logout" >
-                <Logout />
-            </Tab>
+                <Tab heading="Profile">
+                    <Avatar />
+                </Tab>
+                <Tab heading="Logout" >
+                    <Logout />
+                </Tab>
             </Tabs>
         </Container>
         );

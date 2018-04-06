@@ -156,7 +156,6 @@ async handleSubmit(e){
 }).then((response) => response.json())
 .then((data)=> {
 		console.log(data);
-		
 			fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
 					method: 'POST',
 					headers: {
@@ -176,45 +175,35 @@ async handleSubmit(e){
 }).catch((error) => {
 	console.error(error);
 });
-
 	e.preventDefault();
 }
 
-isAuthenticated = () =>{
-    if(this.getToken==''){
-      return false;
-    }else if(this.getToken==null){
-      return false;
-    }else{
-      return true;
-    }
-  }
 	render() {
-		
 		return (
-			<Container style={{padding: 20}}>
-						{this.isAuthenticated ? 
-			Actions.tab() :
-			Actions.login()
-		  }			
-						<View>
-							<Image source={{uri: this.state.pickedImaged}} style={styles.previewImage}  />
-						</View>
+			<Container style={{padding: 20}}>		
+				<View>
+					<Image source={{uri: this.state.pickedImaged}} style={styles.previewImage}  />
+				</View>
 				<Content>
 					<Form>
-
 						<Button title = "Pick Image" onPress = {this.pickImageHandler}>
 							<Text> + </Text>
 						</Button>
 
-						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150} onChange={()=>this.onChangeTweet}/>
+						<TextInput 
+							style = {styles.twit}
+							multiline={true} placeholder="What's Happening ?"
+							autoGrow={true} maxLength={150} 
+							onChange={()=>this.onChangeTweet}
+						/>
+
 						<Button style = {styles.btnTwit} onPress={this.handleSubmit} full>
-              <Text>TWIT</Text>
-         		 </Button> 
+							<Text>TWIT</Text>
+						</Button> 
 					</Form>
 					{this.state.tweets}
 				</Content>
-		  </Container>
+		  	</Container>
       )
 	}
 }

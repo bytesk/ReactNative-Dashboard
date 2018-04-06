@@ -52,25 +52,7 @@ import { Actions } from 'react-native-router-flux';
         console.log("something went wrong store token login");
       }
     }
-
-    async getToken(){
-      try{
-        let token =  await AsyncStorage.getItem(ACCESS_TOKEN);
-        console.log("token is login : " + token);
-      }catch(error){
-        console.log("something went wrong login getToken login");
-      }
-    }
-
-    async removeToken(){
-      try{
-        await AsyncStorage.removeItem(ACCESS_TOKEN);
-        this.getToken();
-      }catch(error){
-        console.log("something went wrong");
-      }
-    }
-  
+    
     async onLoginPressed() {
       this.setState({showProgress: true})
       try {
@@ -98,10 +80,8 @@ import { Actions } from 'react-native-router-flux';
             throw error;
         }
       } catch(error) {
-          this.removeToken();
           this.setState({error: error});
           console.log("error " + error);
-          this.setState({showProgress: false});
       }
     }
 
@@ -115,42 +95,37 @@ import { Actions } from 'react-native-router-flux';
   
 
     render() {
-     const isAuthenticated = this.getToken();
-    //  {isAuthenticated ? 
-    //   Actions.tab() :
-    //   Actions.login()
-    // }
       return (
         <Container style={{padding:20}}>
-          <Content>
-              <Form>
-                  <Item floatingLabel>
-                    <Label>Username</Label>
-                    <Input
-                      ref={component => this.username = component}
-                      autoFocus={true}
-                      onChangeText={ this.handleUsername}
-                    />
-                  </Item>
+            <Content>
+                <Form>
+                    <Item floatingLabel>
+                      <Label>Username</Label>
+                      <Input
+                        ref={component => this.username = component}
+                        autoFocus={true}
+                        onChangeText={ this.handleUsername}
+                      />
+                    </Item>
 
-                  <Item floatingLabel last>
-                    <Label>Password</Label>
-                    <Input
+                    <Item floatingLabel last>
+                      <Label>Password</Label>
+                      <Input
                         ref={component => this.password = component}
-                       secureTextEntry={true}
-                       onChangeText={ this.handlePassword}
-                    />
-                </Item>
+                        secureTextEntry={true}
+                        onChangeText={ this.handlePassword}
+                      />
+                    </Item>
 
-                <View style={{margin:20}} />
-                  <Button primary full onPress={this.onLoginPressed.bind(this)}>
-                    <Text> Log In </Text>
-                  </Button>
-                  <Text>
-                      {this.state.error}
-                  </Text>
-              </Form>
-          </Content>
+                  <View style={{margin:20}} />
+                    <Button primary full onPress={this.onLoginPressed.bind(this)}>
+                      <Text> Log In </Text>
+                    </Button>
+                    <Text>
+                        {this.state.error}
+                    </Text>
+                </Form>
+            </Content>
         </Container>
       );
     }
