@@ -20,7 +20,10 @@ import Avatar from './Avatar';
 export class Logout extends React.Component{
 
 
-
+componentDidMount(){
+  this.removeToken();
+  Actions.login();
+}
 
 
 
