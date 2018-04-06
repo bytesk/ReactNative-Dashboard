@@ -34,7 +34,7 @@ import { Actions } from 'react-native-router-flux';
 
     saveData(accToken){
       let token = accToken;
-      AsyncStorage.setItem('token', token)
+      AsyncStorage.setItem('token', JSON.stringify(token).substring(17,53))
 
       if(this.displayData === ""){
         alert("save fail");

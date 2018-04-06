@@ -19,25 +19,7 @@ import Avatar from './Avatar';
 
 export class Logout extends React.Component{
 
-    removeToken2 = async () => {
-        try{
-          let token =  await AsyncStorage.removeItem('token');
-          return token && token.length > 10;
-        }catch(error){
-          alert(error);
-        }
-      }
 
-
-
-
-    async removeToken(){
-        try{
-          await AsyncStorage.removeItem('token');
-        }catch(error){
-          console.log("something went wrong");
-        }
-      }
 
 
     render(){
@@ -51,7 +33,27 @@ export class Logout extends React.Component{
 export class Tabss extends React.Component{
 
 
-    
+    removeToken2 = async () => {
+        try{
+          let token =  await AsyncStorage.removeItem('token');
+          alert("sukses clear token");
+        }catch(error){
+          alert(error);
+        }
+      }
+
+
+
+
+    async removeToken(){
+        try{
+          await AsyncStorage.removeItem('token');
+          alert("sukses clear token");
+        }catch(error){
+          console.log("something went wrong");
+        }
+      }
+
     authClearStoragee(){
         return dispatch => {
             AsyncStorage.removeItem('token');
@@ -77,10 +79,10 @@ export class Tabss extends React.Component{
         try {
          // await AsyncStorage.removeItem('token');
           //this.logOut;
-          //this.authClearStoragee();
-          alert("Logout Success!");
-          Actions.login();
+          //this.removeToken2();
           this.getToken();
+          Actions.login();
+
 
         } catch (error) {
           console.log('AsyncStorage error: ' + error.message);
@@ -89,24 +91,30 @@ export class Tabss extends React.Component{
 
     render(){
         const isAuthenticated = this.getToken();
-		{!isAuthenticated ? 
-			Actions.login() :
-			Actions.tab()
-		  }
+
         return(
             <Container>
+	
         <Tabs initialPage={0}>
           <Tab heading="Home">
-              <Main />
+          {!isAuthenticated ? Actions.login() : 
+                    <Main />
+            }
           </Tab>
           <Tab heading="Profile">
-              <Avatar />
+          {!isAuthenticated ? Actions.login() : 
+                    <Avatar />
+            }
+              
           </Tab>
-          <Tab heading="Logout" >
-                <Button primary full onPress={this._userLogout}>
-                    <Text> Logout </Text>
-                </Button> 
-          </Tab>
+          {!isAuthenticated ? Actions.login() : 
+                <Tab heading="Logout" >
+                    <Button primary full onPress={this._userLogout}>
+                        <Text> Logout </Text>
+                    </Button> 
+                 </Tab>
+            }
+
         </Tabs>
       </Container>
         );
