@@ -108,8 +108,8 @@ import { Actions } from 'react-native-router-flux';
     render() {
        const isAuthenticated = this.getToken;
       {isAuthenticated ? 
-         Actions.tab() :
-         Actions.login()
+         Actions.login() :
+         Actions.tab()
       }
 
       // const isAuthenticated = this.getToken;

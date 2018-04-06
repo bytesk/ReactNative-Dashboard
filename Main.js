@@ -118,6 +118,7 @@ onChangeTweet(e){
 getToken = async () => {
 	try{
 	  let token =  await AsyncStorage.getItem('token');
+	  alert(token);
 	}catch(error){
 	  alert(error);
 	}
@@ -185,6 +186,10 @@ handleSubmit(e){
 
 						<Button title = "Pick Image" onPress = {this.pickImageHandler}>
 							<Text> pick </Text>
+						</Button>
+
+						<Button onPress = {this.getToken}>
+							<Text> TKN </Text>
 						</Button>
 
 						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150} onChange={()=>this.onChangeTweet}/>
