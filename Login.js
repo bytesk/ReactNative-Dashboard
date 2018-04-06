@@ -31,31 +31,34 @@ import { Actions } from 'react-native-router-flux';
       }
     }
 
-    async getToken(){
-      try{
-        let token =  await AsyncStorage.getItem(ACCESS_TOKEN);
-        console.log("token is login : " + token);
-      }catch(error){
-        console.log("something went wrong login getToken login");
+
+    saveData(accToken){
+      let token = accToken;
+      AsyncStorage.setItem('token', token)
+
+      if(this.displayData === ""){
+        alert("save fail");
+      }
+      else
+      {
+        alert("save sukses");
       }
     }
 
-      getToken2 = () =>{
-        AsyncStorage.getItem(ACCESS_TOKEN)
-        .then((token) =>
-            {
-                console.log("tokennya2 = "+token);
-            }
-        ).catch((error) =>
-            {
-                console.log("erorr token2 = "+error);
-            });
-     }
+    getToken = async () => {
+      try{
+        let token =  await AsyncStorage.getItem('token');
+        return token && token.length > 15;
+        alert("token in login" + token);
+      }catch(error){
+        alert(error);
+      }
+    }
 
     async removeToken(){
       try{
         console.log("token is remove login" + this.getToken())
-        await AsyncStorage.removeItem(ACCESS_TOKEN);
+        await AsyncStorage.removeItem('token');
       }catch(error){
         console.log("something went wrong");
       }
@@ -79,13 +82,9 @@ import { Actions } from 'react-native-router-flux';
             //Handle success
             this.setState({error: ""});
             let accessToken = res;
-            this.storeToken(accessToken);
-            //console.tron.log(accessToken);
+            this.saveData(accessToken);
             console.log("res token: " + accessToken);
-            this.getToken();
-            this.getToken2();
-            //this.removeToken();
-            Actions.tab()
+            Actions.tab();
         } else {
             //Handle error
             let error = res;
@@ -108,11 +107,11 @@ import { Actions } from 'react-native-router-flux';
   
 
     render() {
-    //  const isAuthenticated = null;
-    // {isAuthenticated ? 
-    //   Actions.login() :
-    //   Actions.tab()
-    // }
+       const isAuthenticated = this.getToken;
+      {isAuthenticated ? 
+         Actions.login() :
+         Actions.tab()
+      }
       return (
         <Container style={{padding:20}}>
           <Content>

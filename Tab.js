@@ -17,31 +17,82 @@ import { Actions } from 'react-native-router-flux';
 import Main from './Main';
 import Avatar from './Avatar';
 
-const gotoLogin = () => {
-    removeToken();
-	Actions.login()
- }
+export class Logout extends React.Component{
+
+    removeToken2 = async () => {
+        try{
+          let token =  await AsyncStorage.removeItem('token');
+          return token && token.length > 10;
+        }catch(error){
+          alert(error);
+        }
+      }
 
 
- 
-export class Tabss extends React.Component{
 
-    componentDidMount(){
-        this.removeToken();
-        Actions.login();
-    }
 
     async removeToken(){
         try{
-            Actions.login();
-            console.log("token is remove login" + this.getToken())
-            await AsyncStorage.removeItem(ACCESS_TOKEN);
+          await AsyncStorage.removeItem('token');
         }catch(error){
-            console.log("something went wrong");
+          console.log("something went wrong");
+        }
+      }
+
+
+    render(){
+        return(
+            <View>
+            </View>
+        );
+    }
+}
+
+export class Tabss extends React.Component{
+
+
+    
+    authClearStoragee(){
+        return dispatch => {
+            AsyncStorage.removeItem('token');
+            alert("sukses clear token");
         }
     }
 
+    logOut(){
+        AsyncStorage.setItem('token', "")
+      }
+
+    getToken = async () => {
+        try{
+          let token =  await AsyncStorage.getItem('token');
+          //alert(token);
+          return token && token.length > 10;
+        }catch(error){
+          alert(error);
+        }
+      }
+    
+    async _userLogout() {
+        try {
+         // await AsyncStorage.removeItem('token');
+          //this.logOut;
+          //this.authClearStoragee();
+          alert("Logout Success!");
+          Actions.login();
+          this.getToken();
+
+        } catch (error) {
+          console.log('AsyncStorage error: ' + error.message);
+        }
+      }
+
     render(){
+        const isAuthenticated = this.getToken();
+		{!isAuthenticated ? 
+			Actions.login() :
+			Actions.tab()
+		  }
         return(
             <Container>
         <Tabs initialPage={0}>
@@ -52,13 +103,9 @@ export class Tabss extends React.Component{
               <Avatar />
           </Tab>
           <Tab heading="Logout" >
-              <Card>
-                  <CardItem>
-            <Button full >
-                <Text>Logout</Text>
-            </Button>
-            </CardItem>
-            </Card>
+                <Button primary full onPress={this._userLogout}>
+                    <Text> Logout </Text>
+                </Button> 
           </Tab>
         </Tabs>
       </Container>
