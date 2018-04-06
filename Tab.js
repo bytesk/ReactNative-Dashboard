@@ -18,7 +18,9 @@ import Main from './Main';
 import Avatar from './Avatar';
 
 export class Logout extends React.Component{
-
+    componentDidMount(){
+      this._userLogout();
+    }
     removeToken2 = async () => {
         try{
           let token =  await AsyncStorage.removeItem('token');
@@ -103,9 +105,6 @@ export class Tabss extends React.Component{
               <Avatar />
           </Tab>
           <Tab heading="Logout" >
-                <Button primary full onPress={this._userLogout}>
-                    <Text> Logout </Text>
-                </Button> 
           </Tab>
         </Tabs>
       </Container>
