@@ -16,15 +16,19 @@ import {Container, Header,
 	Footer, FooterTab, Tab, Tabs,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-
-import ImagePicker from 'react-native-image-picker';
-
+var ImagePicker = require('react-native-image-picker');
 
 const ACCESS_TOKEN = 'access_token';
 const gotoLogin = () => {
 	Actions.login();
  }
-
+ var options = {
+	title: 'Pick an Image',
+	storageOptions: {
+	  skipBackup: true,
+	  returnBase64Image: true,
+	}
+  };
 
 export default class Main extends Component {
 	constructor(props){
@@ -34,22 +38,27 @@ export default class Main extends Component {
 				file:"null",
 				tweet: '',
 				people: [],
-				pickedImaged: null
+				pickedImaged: ''
 		};
+		this.pickImageHandler = this.pickImageHandler.bind(this);
+		this.onChangeTweet = this.onChangeTweet.bind(this);
+		this.getTweets = this.getTweets.bind(this);
 	}
 
 	pickImageHandler = () => {
-		ImagePicker.showImagePicker({title: "Pick an image"}, res => {
-			if(res.didCancel){
+		ImagePicker.showImagePicker(options, (response) => {
+			if(response.didCancel){
 				console.log("User cancelled");
 			}
-			else if(res.error){
-				console.log("Error", res.error);
+			else if(response.error){
+				console.log("Error", response.error);
 			}
 			else{
+				let source = response.uri;
 				this.setState({
-					pickedImaged: encodeURIComponent(res.uri)
-				});
+					pickedImaged: source
+				  });
+				  console.log(this.state.pickedImaged);
 			}
 		});
 	}
@@ -113,12 +122,13 @@ getToken = async () => {
   }
 
 handleSubmit(e){
+	console.log(this.state.pickedImaged);
 	const image = {
-		 uri: this.state.pickedImaged,
-   		 type: 'image/jpeg',
-   		 name: 'photo.jpg',
+		uri: this.state.pickedImaged,
+		type: 'image/jpeg',
+		name: 'photo.jpg',
 	};
-	console.log(this.state.pickedImaged.uri);
+	console.log(image.uri);
 	let form = new FormData();
 	form.append("file", image);
 	console.log( form.get('file'));
@@ -163,7 +173,7 @@ handleSubmit(e){
 			<Container style={{padding: 20}}>
 									
 						<View>
-							<Image source= {this.state.pickedImaged} style={styles.previewImage}  />
+							<Image source={{uri: this.state.pickedImaged}} style={styles.previewImage}  />
 						</View>
 				<Content>
 					<Form>
