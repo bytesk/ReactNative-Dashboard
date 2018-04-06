@@ -48,7 +48,7 @@ export default class Main extends Component {
 			}
 			else{
 				this.setState({
-					pickedImaged: {uri: res.uri}
+					pickedImaged: encodeURIComponent(res.uri)
 				});
 			}
 		});
@@ -104,7 +104,12 @@ onChangeTweet(e){
 }
 
 handleSubmit(e){
-	let image = this.state.pickedImaged;
+	const image = {
+		 uri: this.state.pickedImaged,
+   		 type: 'image/jpeg',
+   		 name: 'photo.jpg',
+	};
+	console.log(this.state.pickedImaged.uri);
 	let form = new FormData();
 	form.append("file", image);
 	console.log( form.get('file'));
@@ -113,7 +118,7 @@ handleSubmit(e){
 			headers: {
 				'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
 			},
-			body: form
+			body: form,
 }).then((response) => response.json())
 .then((data)=> {
 		console.log(data);
