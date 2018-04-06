@@ -22,6 +22,17 @@ export class Logout extends React.Component{
 
 
 
+
+
+    async removeToken(){
+        try{
+          await AsyncStorage.removeItem('token');
+        }catch(error){
+          console.log("something went wrong");
+        }
+      }
+
+
     render(){
         return(
             <View>
@@ -32,25 +43,15 @@ export class Logout extends React.Component{
 
 export class Tabss extends React.Component{
 
-
     removeToken2 = async () => {
         try{
-          let token =  await AsyncStorage.removeItem('token');
-          alert("sukses clear token");
+            this.getToken;
+            await AsyncStorage.removeItem('token');
+            alert("sukses clear token");
+            Actions.login();
+            this.getToken;
         }catch(error){
           alert(error);
-        }
-      }
-
-
-
-
-    async removeToken(){
-        try{
-          await AsyncStorage.removeItem('token');
-          alert("sukses clear token");
-        }catch(error){
-          console.log("something went wrong");
         }
       }
 
@@ -58,6 +59,7 @@ export class Tabss extends React.Component{
         return dispatch => {
             AsyncStorage.removeItem('token');
             alert("sukses clear token");
+            Actions.login();
         }
     }
 
@@ -68,24 +70,10 @@ export class Tabss extends React.Component{
     getToken = async () => {
         try{
           let token =  await AsyncStorage.getItem('token');
-          //alert(token);
-          return token && token.length > 10;
+          alert(token);
+
         }catch(error){
           alert(error);
-        }
-      }
-    
-    async _userLogout() {
-        try {
-         // await AsyncStorage.removeItem('token');
-          //this.logOut;
-          //this.removeToken2();
-          this.getToken();
-          Actions.login();
-
-
-        } catch (error) {
-          console.log('AsyncStorage error: ' + error.message);
         }
       }
 
@@ -94,28 +82,23 @@ export class Tabss extends React.Component{
 
         return(
             <Container>
+            {!isAuthenticated ? 
+			Actions.login() :
 	
         <Tabs initialPage={0}>
           <Tab heading="Home">
-          {!isAuthenticated ? Actions.login() : 
-                    <Main />
-            }
+              <Main />
           </Tab>
           <Tab heading="Profile">
-          {!isAuthenticated ? Actions.login() : 
-                    <Avatar />
-            }
-              
+              <Avatar />
           </Tab>
-          {!isAuthenticated ? Actions.login() : 
-                <Tab heading="Logout" >
-                    <Button primary full onPress={this._userLogout}>
-                        <Text> Logout </Text>
-                    </Button> 
-                 </Tab>
-            }
-
+          <Tab heading="Logout" >
+                <Button primary full onPress={this.removeToken2}>
+                    <Text> Logout </Text>
+                </Button> 
+          </Tab>
         </Tabs>
+        	  }
       </Container>
         );
     }

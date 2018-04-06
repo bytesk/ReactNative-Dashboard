@@ -47,9 +47,8 @@ import { Actions } from 'react-native-router-flux';
 
     getToken = async () => {
       try{
-        let token =  await AsyncStorage.getItem('token');
-        return token && token.length > 15;
-        alert("token in login" + token);
+          await AsyncStorage.getItem('token');
+        //alert("token in login" + token);
       }catch(error){
         alert(error);
       }
@@ -109,9 +108,15 @@ import { Actions } from 'react-native-router-flux';
     render() {
        const isAuthenticated = this.getToken;
       {isAuthenticated ? 
-         Actions.login() :
-         Actions.tab()
+         Actions.tab() :
+         Actions.login()
       }
+
+      // const isAuthenticated = this.getToken;
+      // {isAuthenticated == "logout" ? 
+      //    Actions.login() :
+      //    Actions.tab()
+      // }
       return (
         <Container style={{padding:20}}>
           <Content>
