@@ -35,16 +35,22 @@ import { Actions } from 'react-native-router-flux';
     saveData(accToken){
       let token = accToken;
       AsyncStorage.setItem('token', JSON.stringify(token).substring(17,53))
-      console.log("Substring :"+this.getToken );
+
+      if(this.displayData === ""){
+        alert("save fail");
+      }
+      else
+      {
+        alert("save sukses");
+      }
     }
 
     getToken = async () => {
       try{
-        let token =  await AsyncStorage.getItem('token');
-        return token;
-        console.log("token in login" + token);
+          await AsyncStorage.getItem('token');
+        //alert("token in login" + token);
       }catch(error){
-        console.log(error);
+        alert(error);
       }
     }
 
@@ -101,12 +107,19 @@ import { Actions } from 'react-native-router-flux';
 
     render() {
        const isAuthenticated = this.getToken;
-      {isAuthenticated ? 
-         Actions.login() :
-         Actions.tab()
-      }
+      
+      // const isAuthenticated = this.getToken;
+      // {isAuthenticated == "logout" ? 
+      //    Actions.login() :
+      //    Actions.tab()
+      // }
       return (
         <Container style={{padding:20}}>
+        {isAuthenticated ? 
+         Actions.tab() :
+         Actions.login()
+      }
+
           <Content>
               <Form>
                   <Item floatingLabel>

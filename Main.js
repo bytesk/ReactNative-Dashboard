@@ -69,6 +69,8 @@ export default class Main extends Component {
 				headers: {
 					'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
 					//'Access-Token': AsyncStorage.getItem('token')
+					//'Access-Token': localStorage.getItem('access'),
+					//'Access-Token': this.getToken
 				}
 	}).then(results => results.json()).then(data => {let tweets = data.map((item)=>{
 				return(
@@ -106,7 +108,6 @@ export default class Main extends Component {
 }
 componentDidMount() {
 	this.getTweets();
-	console.log("Main"+this.getToken);
 }
 
 onChangeTweet(e){
@@ -116,9 +117,9 @@ onChangeTweet(e){
 getToken = async () => {
 	try{
 	  let token =  await AsyncStorage.getItem('token');
-	  return token;
+	  alert(token);
 	}catch(error){
-	  console.log(error);
+	  alert(error);
 	}
   }
 
@@ -137,7 +138,7 @@ handleSubmit(e){
 			method: 'POST',
 			headers: {
 				//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
-				'Access-Token':this.getToken
+				'Access-Token': this.getToken
 			},
 			body: form,
 }).then((response) => response.json())
@@ -149,6 +150,7 @@ handleSubmit(e){
 					headers: {
 						'Content-Type': 'application/json',
 						//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
+						//'Access-Token': AsyncStorage.getItem('token')
 						'Access-Token': this.getToken
 					},
 					body: JSON.stringify({
@@ -189,10 +191,9 @@ handleSubmit(e){
 						<Button style = {styles.btnTwit} onPress={this.handleSubmit} full>
               <Text>TWIT</Text>
          		 </Button> 
-
-				  
-  
-
+				  <Button style = {styles.btnTwit} onPress={this.getToken}>
+              <Text>GETTOKEN</Text>
+         		 </Button> 
 					</Form>
 					{this.state.tweets}
 				</Content>
