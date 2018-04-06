@@ -6,6 +6,7 @@ import {Container, Header,
 
 
 import {View, TouchableHighlight, AsyncStorage} from 'react-native';
+import { BackHandler } from 'react-native'
 
 import { Actions } from 'react-native-router-flux';
 
@@ -21,8 +22,30 @@ import { Actions } from 'react-native-router-flux';
         error: "",
       };
     }
+    componentWillUnmount () {
+      BackHandler.removeEventListener('hardwareBackPress', () => this.backAndroid()) // Remove listener
+    }
+    backAndroid () {
+      Actions.login() // Return to previous screen
+      return true // Needed so BackHandler knows that you are overriding the default action and that it should not close the app
+    }
+
+    async componentDidMount(){
+      BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid())
+      console.log("ini didmount login");
+      
+      let token = await AsyncStorage.getItem(ACCESS_TOKEN);
+      console.log("token didmount login = "+token);
 
 
+      if(token != "logout"){
+        Actions.tab();
+      } else {
+        Actions.login();
+      }
+      
+    }
+    
     async storeToken(accessToken){
       try{
         await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
@@ -31,33 +54,19 @@ import { Actions } from 'react-native-router-flux';
       }
     }
 
-
-    saveData(accToken){
-      let token = accToken;
-      AsyncStorage.setItem('token', JSON.stringify(token).substring(17,53))
-
-      if(this.displayData === ""){
-        alert("save fail");
-      }
-      else
-      {
-        alert("save sukses");
-      }
-    }
-
-    getToken = async () => {
+    async getToken(){
       try{
-          await AsyncStorage.getItem('token');
-        //alert("token in login" + token);
+        let token =  await AsyncStorage.getItem(ACCESS_TOKEN);
+        console.log("token is login : " + token);
       }catch(error){
-        alert(error);
+        console.log("something went wrong login getToken login");
       }
     }
 
     async removeToken(){
       try{
-        console.log("token is remove login" + this.getToken())
-        await AsyncStorage.removeItem('token');
+        await AsyncStorage.removeItem(ACCESS_TOKEN);
+        this.getToken();
       }catch(error){
         console.log("something went wrong");
       }
@@ -81,7 +90,7 @@ import { Actions } from 'react-native-router-flux';
             //Handle success
             this.setState({error: ""});
             let accessToken = res;
-            this.saveData(accessToken);
+            this.storeToken(accessToken);
             console.log("res token: " + accessToken);
             Actions.tab();
         } else {
@@ -93,6 +102,7 @@ import { Actions } from 'react-native-router-flux';
           this.removeToken();
           this.setState({error: error});
           console.log("error " + error);
+          this.setState({showProgress: false});
       }
     }
 
@@ -106,17 +116,11 @@ import { Actions } from 'react-native-router-flux';
   
 
     render() {
-       const isAuthenticated = this.getToken;
-      {isAuthenticated ? 
-         Actions.login() :
-         Actions.tab()
-      }
-
-      // const isAuthenticated = this.getToken;
-      // {isAuthenticated == "logout" ? 
-      //    Actions.login() :
-      //    Actions.tab()
-      // }
+     const isAuthenticated = this.getToken();
+    //  {isAuthenticated ? 
+    //   Actions.tab() :
+    //   Actions.login()
+    // }
       return (
         <Container style={{padding:20}}>
           <Content>
@@ -133,7 +137,7 @@ import { Actions } from 'react-native-router-flux';
                   <Item floatingLabel last>
                     <Label>Password</Label>
                     <Input
-                     	 ref={component => this.password = component}
+                        ref={component => this.password = component}
                        secureTextEntry={true}
                        onChangeText={ this.handlePassword}
                     />
@@ -142,8 +146,7 @@ import { Actions } from 'react-native-router-flux';
                 <View style={{margin:20}} />
                   <Button primary full onPress={this.onLoginPressed.bind(this)}>
                     <Text> Log In </Text>
-                  </Button> 
-
+                  </Button>
                   <Text>
                       {this.state.error}
                   </Text>

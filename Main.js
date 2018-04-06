@@ -18,7 +18,8 @@ import {Container, Header,
 import { Actions } from 'react-native-router-flux';
 var ImagePicker = require('react-native-image-picker');
 
-const ACCESS_TOKEN = 'access_token';
+let ACCESS_TOKEN = AsyncStorage.getItem('token');
+
 const gotoLogin = () => {
 	Actions.login();
  }
@@ -68,7 +69,7 @@ export default class Main extends Component {
 				method: 'GET',
 				headers: {
 					'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
-					//'Access-Token': AsyncStorage.getItem('token')
+					//'Access-Token': ACCESS_TOKEN
 					//'Access-Token': localStorage.getItem('access'),
 					//'Access-Token': this.getToken
 				}
@@ -118,7 +119,8 @@ onChangeTweet(e){
 getToken = async () => {
 	try{
 	  let token =  await AsyncStorage.getItem('token');
-	  alert(token);
+	  //ACCESS_TOKEN = token;
+	  //alert("get token main" + ACCESS_TOKEN);
 	}catch(error){
 	  alert(error);
 	}
