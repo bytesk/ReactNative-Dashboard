@@ -146,7 +146,8 @@ componentDidMount(){
                   </Button> 
 
                   <Text>
-                      {this.state.error}
+                      {this.state
+                      .error}
                   </Text>
               </Form>
           </Content>
