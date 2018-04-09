@@ -18,15 +18,16 @@ import {Container, Header,
 import { Actions } from 'react-native-router-flux';
 var ImagePicker = require('react-native-image-picker');
 
-const ACCESS_TOKEN = 'access_token';
+let ACCESS_TOKEN = AsyncStorage.getItem('token');
+
 const gotoLogin = () => {
 	Actions.login();
  }
  var options = {
 	title: 'Pick an Image',
 	storageOptions: {
-	  skipBackup: true,
-	  returnBase64Image: true,
+	  //skipBackup: true,
+	  //returnBase64Image: true,
 	}
   };
 
@@ -38,11 +39,17 @@ export default class Main extends Component {
 				file:"null",
 				tweet: '',
 				people: [],
-				pickedImaged: null,
+				imageData: null,
+				imageUri:null,
+				imageFilename:null,
+				imagePath: null,
+				imageType: null,
+				imageOrigUrl: null,
 		};
 		this.pickImageHandler = this.pickImageHandler.bind(this);
 		this.onChangeTweet = this.onChangeTweet.bind(this);
 		this.getTweets = this.getTweets.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 	pickImageHandler = () => {
@@ -54,27 +61,48 @@ export default class Main extends Component {
 				console.log("Error", response.error);
 			}
 			else{
-				let source = response.uri;
+				let data = response.data;
+				let uri = response.uri;
+				let path = response.path;
+				let filename = response.fileName;
+				let type = response.type;
+				let origUrl = response.origURL;
+				
 				this.setState({
-					pickedImaged: source
+					imageData: data,
+					imageFilename: filename,
+					imageUri: uri,
+					imagePath: path,
+					imageType: type,
+					imageOrigUrl: origUrl,
 				  });
-				  console.log(this.state.pickedImaged);
+				  console.log("imageData:"+this.state.imageData);
+				  console.log("imageFilename:"+this.state.imageFilename);
+				  console.log("imageUri:"+this.state.imageUri);
+				  console.log("imagePath:"+this.state.imagePath);
+				  console.log("imageType:"+this.state.imageType);
+				  console.log("imageOrigUrl:"+this.state.imageOrigUrl);
 			}
 		});
 	}
 	
-	getTweets(){
+	async getTweets(){
+		let token = await AsyncStorage.getItem('access_token');
+		tokenJSON = JSON.parse(token);
+		console.log("token getTweets = "+tokenJSON.access_token);
 		fetch('https://test-mobile.neo-fusion.com/data', {
 				method: 'GET',
 				headers: {
-					'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
-					//'Access-Token': AsyncStorage.getItem('token')
+					//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
+					//'Access-Token': ACCESS_TOKEN
 					//'Access-Token': localStorage.getItem('access'),
 					//'Access-Token': this.getToken
+					//'Access-Token': AsyncStorage.getItem('token')
+					'Access-Token': tokenJSON.access_token,
 				}
 	}).then(results => results.json()).then(data => {let tweets = data.map((item)=>{
 				return(
-						<View key={item.id}>
+					<View key={item.id}>
 					<Card>
 						<CardItem header>
 							<Left>
@@ -117,6 +145,8 @@ onChangeTweet(e){
 getToken = async () => {
 	try{
 	  let token =  await AsyncStorage.getItem('token');
+	  //ACCESS_TOKEN = token;
+	  //alert("get token main" + ACCESS_TOKEN);
 	  console.log(token);
 	  return token;
 	}catch(error){
@@ -124,35 +154,42 @@ getToken = async () => {
 	}
   }
 
-handleSubmit(e){
-	console.log(this.state.pickedImaged);
+async handleSubmit(){
+	let token = await AsyncStorage.getItem('access_token');
+	tokenJSON = JSON.parse(token);
+	console.log('token: ' + JSON.stringify(tokenJSON));
 	const image = {
-		uri: this.state.pickedImaged,
-		type: 'image/jpeg',
-		name: 'photo.jpg',
+		type: this.state.imageType,
+		name: this.state.imageFilename,
+		uri: this.state.imagePath,
+		data: this.state.imageData,
 	};
-	console.log(image.uri);
 	let form = new FormData();
-	form.append("file", image);
-	console.log( form.get('file'));
+	form.append("image", image);
 	fetch('http://test-mobile.neo-fusion.com/data/create', {
 			method: 'POST',
 			headers: {
 				//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
-				'Access-Token': this.getToken
+				//'Access-Token': this.getToken
+    			'Content-Type': 'multipart/form-data',
+				'Access-Token': tokenJSON.access_token,
 			},
 			body: form,
-}).then((response) => response.json())
+}).then((response) => {
+	console.log(response);
+	console.log(JSON.stringify(response));
+	return response.json();
+})
 .then((data)=> {
 		console.log(data);
-		
-			fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
+			return fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 						//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
 						//'Access-Token': AsyncStorage.getItem('token')
-						'Access-Token': this.getToken
+						//'Access-Token': this.getToken
+						'Access-Token': tokenJSON.access_token,
 					},
 					body: JSON.stringify({
 							'summary': this.state.tweet,
@@ -164,45 +201,34 @@ handleSubmit(e){
 }).catch((error) => {
 	console.error(error);
 });
-
-	e.preventDefault();
 }
 
-isAuthenticated = () =>{
-    if(this.getToken==''){
-      return false;
-    }else if(this.getToken==null){
-      return false;
-    }else{
-      return true;
-    }
-  }
 	render() {
-		
 		return (
-			<Container style={{padding: 20}}>
-						{this.isAuthenticated ? 
-			Actions.tab() :
-			Actions.login()
-		  }			
-						<View>
-							<Image source={{uri: this.state.pickedImaged}} style={styles.previewImage}  />
-						</View>
+			<Container style={{padding: 20}}>		
+				<View>
+					<Image source={{uri: this.state.imageUri}} style={styles.previewImage}  />
+				</View>
 				<Content>
 					<Form>
-
 						<Button title = "Pick Image" onPress = {this.pickImageHandler}>
 							<Text> + </Text>
 						</Button>
 
-						<TextInput style = {styles.twit} multiline={true} placeholder="What's Happening ?" autoGrow={true} maxLength={150} onChange={()=>this.onChangeTweet}/>
+						<TextInput 
+							style = {styles.twit}
+							multiline={true} placeholder="What's Happening ?"
+							autoGrow={true} maxLength={150} 
+							onChange={()=>this.onChangeTweet}
+						/>
+
 						<Button style = {styles.btnTwit} onPress={this.handleSubmit} full>
-              <Text>TWIT</Text>
-         		 </Button> 
+							<Text>TWIT</Text>
+						</Button> 
 					</Form>
 					{this.state.tweets}
 				</Content>
-		  </Container>
+		  	</Container>
       )
 	}
 }

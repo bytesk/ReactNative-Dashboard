@@ -17,9 +17,9 @@ export default class App extends Component {
 
     return(
         <Router>
-          <Scene key="root" renderBackButton={()=>{null}}>
-            <Scene key="login" component = {Login} title = "Login" initial = {true} renderBackButton={()=>(null)}/>
-            <Scene key="tab" component = {Tabss} hideBackImage={true} title = "Main" renderBackButton={()=>{null}} left={()=>{null}}/>
+          <Scene key = "root">
+            <Scene key = "login" component = {Login} title = "Login" initial = {true}  renderBackButton = {() =>(Login)} />
+            <Scene key = "tab" component = {Tabss} title = "Main" renderBackButton = {() =>(null)} />
           </Scene>
       </Router>
     )

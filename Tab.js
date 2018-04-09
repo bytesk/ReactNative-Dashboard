@@ -1,40 +1,41 @@
 import React, { Component } from 'react';
 import {
-	ScrollView,
-	View,
-	TextInput,
-	AsyncStorage,
-	Image
+  ScrollView,
+  View,
+  TextInput,
+  AsyncStorage,
+  Image
 } from 'react-native';
 import {Container, Header, 
   Content, Form, Item, 
-	Input, Label, Button, Text, 
-	Icon, Left, Right, Title, Body,
-	Card, CardItem, Thumbnail,
-	Footer, FooterTab, Tab, Tabs,
+  Input, Label, Button, Text, 
+  Icon, Left, Right, Title, Body,
+  Card, CardItem, Thumbnail,
+  Footer, FooterTab, Tab, Tabs,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import Main from './Main';
 import Avatar from './Avatar';
 
+import { Router, Scene } from 'react-native-router-flux'
+
+
+const ACCESS_TOKEN = 'access_token';
+
 export class Logout extends React.Component{
-
-
-componentDidMount(){
-  this.removeToken();
-  Actions.login();
-}
-
-
+    componentDidMount(){
+        console.log("did mount logout");
+        this.removeToken();
+        Actions.login();
+    }
 
     async removeToken(){
-        try{
-          await AsyncStorage.removeItem('token');
-        }catch(error){
-          console.log("something went wrong");
-        }
+      try{
+        await AsyncStorage.setItem(ACCESS_TOKEN, "logout");
+      }catch(error){
+        console.log("something went wrong store token login");
       }
-
+    }
 
     render(){
         return(
@@ -43,71 +44,32 @@ componentDidMount(){
         );
     }
 }
-
 export class Tabss extends React.Component{
 
-    removeToken2 = async () => {
-        try{
-            this.getToken;
-            await AsyncStorage.removeItem('token');
-            alert("sukses clear token");
-            Actions.login();
-            this.getToken;
-        }catch(error){
-          alert(error);
-        }
-      }
-
-    authClearStoragee(){
-        return dispatch => {
-            AsyncStorage.removeItem('token');
-            alert("sukses clear token");
-            Actions.login();
-        }
+    componentDidMount(){
+        this.checkLogin();
     }
-
-    logOut(){
-        AsyncStorage.setItem('token', "")
-      }
-
-    getToken = async () => {
-        try{
-          let token =  await AsyncStorage.getItem('token');
-          alert(token);
-          return token;
-        }catch(error){
-          alert(error);
-        }
-      }
-      isAuthenticated = () =>{
-        if(this.getToken==''){
-          return false;
-        }else if(this.getToken==null){
-          return false;
-        }else{
-          return true;
-        }
-      }
+    async checkLogin(){
+    AsyncStorage.getItem('token').then((val) =>{
+      console.log("token di main = "+val);
+    });
+  }
     render(){
-
         return(
-            <Container>
-            {!this.isAuthenticated ? 
-			Actions.login() :
-	
-        <Tabs initialPage={0}>
-          <Tab heading="Home">
-              <Main />
-          </Tab>
-          <Tab heading="Profile">
-              <Avatar />
-          </Tab>
-          <Tab heading="Logout" >
-                <Logout />
-          </Tab>
-        </Tabs>
-        	  }
-      </Container>
+        <Container>
+            <Tabs initialPage={0}>
+                <Tab heading="Home">
+                    <Main />
+                </Tab>
+
+                <Tab heading="Profile">
+                    <Avatar />
+                </Tab>
+                <Tab heading="Logout" >
+                    <Logout />
+                </Tab>
+            </Tabs>
+        </Container>
         );
     }
 }
