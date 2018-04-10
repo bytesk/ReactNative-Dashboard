@@ -174,32 +174,6 @@ async handleSubmit(){
 	  }).catch((err) => {
 		// ...
 	  })
-	.then((response) => {
-		console.log(response);
-		console.log(JSON.stringify(response));
-		//return response.json();
-	})
-.then((data)=> {
-		console.log(data);
-			return fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
-						//'Access-Token': AsyncStorage.getItem('token')
-						//'Access-Token': this.getToken
-						'Access-Token': tokenJSON.access_token,
-					},
-					body: JSON.stringify({
-							'summary': this.state.tweet,
-							'detail': this.state.tweet,
-				})
-		}).then(response => response.json()).then((data =>{
-				this.getTweets();
-		}))
-}).catch((error) => {
-	console.error(error);
-});
 }
 
 	render() {
