@@ -74,10 +74,10 @@ export default class Main extends Component {
 				this.setState({
 					imageData: data,
 					imageFilename: filename,
-					imageUri: uri,
 					imagePath: path,
 					imageType: type,
 					imageOrigUrl: origUrl,
+					imageUri: uri,
 					data: response.data
 				  });
 				  console.log("imageData:"+this.state.imageData);
@@ -165,14 +165,17 @@ async handleSubmit(){
 	console.log('token: ' + JSON.stringify(tokenJSON));
 
 	RNFetchBlob.fetch('POST', 'http://test-mobile.neo-fusion.com/data/create', {
-		'Content-Type': 'multipart/form-data',
-		'Access-Token': tokenJSON.access_token,
+		headers: {
+			'Access-Token': tokenJSON.access_token,
+			'Content-Type': 'multipart/form-data',
+		}
+
 	  }, [
-		{ name : this.state.imageFilename, filename : this.state.imageUri, type:this.state.imageType, data: this.state.data},
+		{ name : 'image', filename : 'image.png' , type:this.state.imageType, data: this.state.imageUri},
 	  ]).then((resp) => {
 		// ...
 	  }).catch((err) => {
-		// ...
+		alert(err);
 	  })
 }
 
