@@ -168,11 +168,27 @@ async handleSubmit(){
 		'Content-Type': 'multipart/form-data',
 		'Access-Token': tokenJSON.access_token,
 	  }, [
-		{ name : this.state.imageFilename, filename : this.state.imageUri, type:this.state.imageType, data: this.state.data},
-	  ]).then((resp) => {
-		// ...
-	  }).catch((err) => {
-		// ...
+		{ name : 'photo', 
+		filename : this.state.imageFilename, 
+		type:this.state.imageType, 
+		data: this.state.imageData},
+	  ]).then((response) => response.json()).then((data)=>{
+		fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
+			method: 'POST',
+			headers: {
+			  'Content-Type': 'application/json',
+			  'Access-Token': tokenJSON.access_token,
+			},
+			body: JSON.stringify({
+				'summary': this.state.tweet,
+				'detail': this.state.tweet,
+		  })
+	  }).then(response => response.json()).then((data =>{
+		  this.getTweets();
+	  }))
+	  })
+	  .catch((err) => {
+		console.error(err);
 	  })
 }
 
