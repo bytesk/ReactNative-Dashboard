@@ -13,6 +13,9 @@ import java.util.List;
 
 import com.imagepicker.ImagePickerPackage; 
 
+import com.RNFetchBlob.RNFetchBlobPackage;  
+
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
@@ -25,7 +28,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-          new ImagePickerPackage()
+          new ImagePickerPackage(),
+          new RNFetchBlobPackage() 
       );
     }
 

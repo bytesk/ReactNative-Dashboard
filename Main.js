@@ -18,6 +18,8 @@ import {Container, Header,
 import { Actions } from 'react-native-router-flux';
 var ImagePicker = require('react-native-image-picker');
 
+import RNFetchBlob from 'react-native-fetch-blob'
+
 let ACCESS_TOKEN = AsyncStorage.getItem('token');
 
 const gotoLogin = () => {
@@ -45,6 +47,7 @@ export default class Main extends Component {
 				imagePath: null,
 				imageType: null,
 				imageOrigUrl: null,
+				data: null
 		};
 		this.pickImageHandler = this.pickImageHandler.bind(this);
 		this.onChangeTweet = this.onChangeTweet.bind(this);
@@ -75,6 +78,7 @@ export default class Main extends Component {
 					imagePath: path,
 					imageType: type,
 					imageOrigUrl: origUrl,
+					data: response.data
 				  });
 				  console.log("imageData:"+this.state.imageData);
 				  console.log("imageFilename:"+this.state.imageFilename);
@@ -155,31 +159,26 @@ getToken = async () => {
   }
 
 async handleSubmit(){
+
 	let token = await AsyncStorage.getItem('access_token');
 	tokenJSON = JSON.parse(token);
 	console.log('token: ' + JSON.stringify(tokenJSON));
-	const image = {
-		type: this.state.imageType,
-		name: this.state.imageFilename,
-		uri: this.state.imagePath,
-		data: this.state.imageData,
-	};
-	let form = new FormData();
-	form.append("image", image);
-	fetch('http://test-mobile.neo-fusion.com/data/create', {
-			method: 'POST',
-			headers: {
-				//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
-				//'Access-Token': this.getToken
-    			'Content-Type': 'multipart/form-data',
-				'Access-Token': tokenJSON.access_token,
-			},
-			body: form,
-}).then((response) => {
-	console.log(response);
-	console.log(JSON.stringify(response));
-	return response.json();
-})
+
+	RNFetchBlob.fetch('POST', 'http://test-mobile.neo-fusion.com/data/create', {
+		'Content-Type': 'multipart/form-data',
+		'Access-Token': tokenJSON.access_token,
+	  }, [
+		{ name : this.state.imageFilename, filename : this.state.imageUri, type:this.state.imageType, data: this.state.data},
+	  ]).then((resp) => {
+		// ...
+	  }).catch((err) => {
+		// ...
+	  })
+	.then((response) => {
+		console.log(response);
+		console.log(JSON.stringify(response));
+		//return response.json();
+	})
 .then((data)=> {
 		console.log(data);
 			return fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
