@@ -20,6 +20,8 @@ var ImagePicker = require('react-native-image-picker');
 
 import RNFetchBlob from 'react-native-fetch-blob'
 
+import axios from 'axios';
+
 let ACCESS_TOKEN = AsyncStorage.getItem('token');
 
 const gotoLogin = () => {
@@ -78,7 +80,6 @@ export default class Main extends Component {
 					imageType: type,
 					imageOrigUrl: origUrl,
 					imageUri: uri,
-					data: response.data
 				  });
 				  console.log("imageData:"+this.state.imageData);
 				  console.log("imageFilename:"+this.state.imageFilename);
@@ -157,27 +158,61 @@ getToken = async () => {
 	  alert(error);
 	}
   }
-
-async handleSubmit(){
+  async handleSubmit(){
 
 	let token = await AsyncStorage.getItem('access_token');
 	tokenJSON = JSON.parse(token);
 	console.log('token: ' + JSON.stringify(tokenJSON));
-
+	/*
 	RNFetchBlob.fetch('POST', 'http://test-mobile.neo-fusion.com/data/create', {
-		headers: {
-			'Access-Token': tokenJSON.access_token,
-			'Content-Type': 'multipart/form-data',
-		}
-
+	  'Content-Type': 'multipart/form-data',
+	  'Access-Token': tokenJSON.access_token,
 	  }, [
-		{ name : 'image', filename : 'image.png' , type:this.state.imageType, data: this.state.imageUri},
-	  ]).then((resp) => {
-		// ...
-	  }).catch((err) => {
-		alert(err);
+	  { name : 'photo', 
+	  filename : this.state.imageFilename, 
+	  type:this.state.imageType, 
+	  data: this.state.imageData},
+	  ]).then((response) => response.json()).then((data)=>{
+		console.log("response create twit = "+JSON.stringify(data));
+	  fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
+		method: 'POST',
+		headers: {
+		  'Content-Type': 'application/json',
+		  'Access-Token': tokenJSON.access_token,
+		},
+		body: JSON.stringify({
+		  'summary': this.state.tweet,
+		  'detail': this.state.tweet,
+		})
+	  }).then(response => response.json()).then((data =>{
+		this.getTweets();
+	  }))
 	  })
-}
+	  .catch((err) => {
+	  console.error(err);
+	  })
+	  */
+	var data = new FormData();
+	data.append('file', {uri: this.state.imageUri, name: this.state.imageFilename, type: this.state.imageType});
+	data.append('summary', this.state.tweet);
+	data.append('detail', this.state.tweet);
+  
+	const config = {
+	  headers: { //'content-type': 'multipart/form-data',
+			'Access-Token': tokenJSON.access_token
+	  },
+	  timeout: 10000
+	}
+	var res_msg;
+	axios.post('http://test-mobile.neo-fusion.com/data/create', data, config)
+	  .then(response => {
+	  console.log("response stringify "+JSON.stringify(response));
+	  })
+	  .catch((error) => {
+	  console.log("Error gelondongan = "+error); 
+	  });
+	  this.getTweets();
+  }
 
 	render() {
 		return (
