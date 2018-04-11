@@ -143,9 +143,11 @@ componentDidMount() {
 	this.getTweets();
 }
 
-onChangeTweet(e){
-	this.setState({tweet: e.target.value});
-}
+onChangeTweet = val => {
+	this.setState({
+		tweet: val
+	});
+};
 
 getToken = async () => {
 	try{
@@ -203,15 +205,24 @@ getToken = async () => {
 	  },
 	  timeout: 10000
 	}
-	var res_msg;
 	axios.post('http://test-mobile.neo-fusion.com/data/create', data, config)
 	  .then(response => {
-	  console.log("response stringify "+JSON.stringify(response));
-	  })
-	  .catch((error) => {
-	  console.log("Error gelondongan = "+error); 
-	  });
-	  this.getTweets();
+	 	 console.log("response stringify "+JSON.stringify(response));
+		}).then((response) => response.json())
+		.then((data)=> {
+				//console.log(data);
+				alert("ini data" + JSON.stringify(data.id));
+				var data2 = new FormData();
+				data2.append('summary', this.state.tweet);
+				data2.append('detail', this.state.tweet);
+
+				axios.post('http://test-mobile.neo-fusion.com/data/'+data.id+'/update', data2, config)
+						this.getTweets();
+		}).catch((error) => {
+		console.log("Error gelondongan = "+error); 
+		});
+		this.getTweets();
+		alert(this.state.tweet);
   }
 
 	render() {
@@ -230,7 +241,8 @@ getToken = async () => {
 							style = {styles.twit}
 							multiline={true} placeholder="What's Happening ?"
 							autoGrow={true} maxLength={150} 
-							onChange={()=>this.onChangeTweet}
+							onChangeText={this.onChangeTweet}
+							value={this.state.tweet}
 						/>
 
 						<Button style = {styles.btnTwit} onPress={this.handleSubmit} full>
