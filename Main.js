@@ -157,10 +157,18 @@ getToken = async () => {
 	}catch(error){
 	  alert(error);
 	}
-  }
+	}
+	async storeID(id){
+		try{
+			await AsyncStorage.setItem('id', id);
+		}catch(error){
+			console.log("something went wrong store id");
+		}
+	}
   async handleSubmit(){
 
 	let token = await AsyncStorage.getItem('access_token');
+	let id = await AsyncStorage.getItem('id');
 	tokenJSON = JSON.parse(token);
 	console.log('token: ' + JSON.stringify(tokenJSON));
 	/*
@@ -194,8 +202,6 @@ getToken = async () => {
 	  */
 	var data = new FormData();
 	data.append('file', {uri: this.state.imageUri, name: this.state.imageFilename, type: this.state.imageType});
-	data.append('summary', this.state.tweet);
-	data.append('detail', this.state.tweet);
   
 	const config = {
 	  headers: { //'content-type': 'multipart/form-data',
@@ -203,14 +209,29 @@ getToken = async () => {
 	  },
 	  timeout: 10000
 	}
+	const config2 = {
+		headers: { //'content-type': 'multipart/form-data',
+			'Access-Token': tokenJSON.access_token,
+			'Content-Type': 'application/json',
+	  },
+		timeout: 10000,
+		//responseType:'text'
+	}
 	var res_msg;
 	axios.post('http://test-mobile.neo-fusion.com/data/create', data, config)
 	  .then(response => {
-	  console.log("response stringify "+JSON.stringify(response));
-	  })
+			//this.storeID(response.data.id);
+			//console.log(JSON.parse(response.data.id));
+			return axios.post('https://test-mobile.neo-fusion.com/data/'+JSON.parse(response.data.id)+'/update',{
+				'summary': this.state.tweet,
+				'detail': this.state.tweet,
+			},config);
+			//console.log(response.data.id);
+		})
+		.then(res => console.log(res.data))
 	  .catch((error) => {
 	  console.log("Error gelondongan = "+error); 
-	  });
+		});
 	  this.getTweets();
   }
 
@@ -230,12 +251,14 @@ getToken = async () => {
 							style = {styles.twit}
 							multiline={true} placeholder="What's Happening ?"
 							autoGrow={true} maxLength={150} 
-							onChange={()=>this.onChangeTweet}
+							value={this.state.tweet}
+							onChangeText={(text)=>this.setState({tweet: text})}
 						/>
 
 						<Button style = {styles.btnTwit} onPress={this.handleSubmit} full>
 							<Text>TWIT</Text>
 						</Button> 
+						<Text>{this.state.tweet}</Text>
 					</Form>
 					{this.state.tweets}
 				</Content>
