@@ -92,6 +92,7 @@ export default class Main extends Component {
 	}
 	
 	async getTweets(){
+		this.changeImgNull();
 		let token = await AsyncStorage.getItem('access_token');
 		tokenJSON = JSON.parse(token);
 		console.log("token getTweets = "+tokenJSON.access_token);
@@ -219,36 +220,51 @@ getToken = async () => {
 		timeout: 10000,
 		//responseType:'text'
 	}
-
-	var data2 = new FormData();
+	let message = this.state.tweet;
+	var res_msg;
 	axios.post('http://test-mobile.neo-fusion.com/data/create', data, config)
 	.then(response => {
 			//this.storeID(response.data.id);
 			//console.log(JSON.parse(response.data.id));
-			 axios.post('https://test-mobile.neo-fusion.com/data/'+response.data.id+'/update',{
-				body: JSON.stringify({
-					'summary': this.state.tweet,
-					'detail': this.state.tweet,
-				}).
-				
-				data2.append('summary', this.state.tweet).
-				data2.append('detail', this.state.tweet)
-				
-			},config);
-			alert(response.data.id);
+			/*return axios.post('https://test-mobile.neo-fusion.com/data/'+response.data.id+'/update',{
+				'summary': this.state.tweet,
+				'detail': this.state.tweet,
+			},config2);*/
+			return axios({
+				url:'https://test-mobile.neo-fusion.com/data/'+response.data.id+'/update',
+				data: {
+					'summary': message,
+					'detail': message,
+				},
+				method: 'post',
+				headers:{
+					'Access-Token': tokenJSON.access_token,
+					'Content-Type': 'application/json',
+				}
+			});
+			//console.log(response.data.id);
 		})
-		.then(res => console.log(res.data))
+		.then(res => this.getTweets())
 	  .catch((error) => {
 	  console.log("Error gelondongan = "+error); 
 		});
-	  this.getTweets();
+	  
+	}
+	
+	changeImgNull() {
+    console.log('state changed!');
+    this.setState({
+      imageUri: null
+    });
   }
 
 	render() {
 		return (
 			<Container style={{padding: 20}}>		
 				<View>
-					<Image source={{uri: this.state.imageUri}} style={styles.previewImage}  />
+					<Image source={{uri: this.state.imageUri}} style={styles.previewImage}  
+						
+					/>
 				</View>
 				<Content>
 					<Form>
@@ -267,7 +283,6 @@ getToken = async () => {
 						<Button style = {styles.btnTwit} onPress={this.handleSubmit} full>
 							<Text>TWIT</Text>
 						</Button> 
-						<Text>{this.state.tweet}</Text>
 					</Form>
 					{this.state.tweets}
 				</Content>
