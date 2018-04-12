@@ -159,10 +159,18 @@ getToken = async () => {
 	}catch(error){
 	  alert(error);
 	}
-  }
+	}
+	async storeID(id){
+		try{
+			await AsyncStorage.setItem('id', id);
+		}catch(error){
+			console.log("something went wrong store id");
+		}
+	}
   async handleSubmit(){
 
 	let token = await AsyncStorage.getItem('access_token');
+	let id = await AsyncStorage.getItem('id');
 	tokenJSON = JSON.parse(token);
 	console.log('token: ' + JSON.stringify(tokenJSON));
 	/*
@@ -196,8 +204,6 @@ getToken = async () => {
 	  */
 	var data = new FormData();
 	data.append('file', {uri: this.state.imageUri, name: this.state.imageFilename, type: this.state.imageType});
-	data.append('summary', this.state.tweet);
-	data.append('detail', this.state.tweet);
   
 	const config = {
 	  headers: { //'content-type': 'multipart/form-data',
@@ -205,24 +211,37 @@ getToken = async () => {
 	  },
 	  timeout: 10000
 	}
-	axios.post('http://test-mobile.neo-fusion.com/data/create', data, config)
-	  .then(response => {
-	 	 console.log("response stringify "+JSON.stringify(response));
-		}).then((response) => response.json())
-		.then((data)=> {
-				//console.log(data);
-				alert("ini data" + JSON.stringify(data.id));
-				var data2 = new FormData();
-				data2.append('summary', this.state.tweet);
-				data2.append('detail', this.state.tweet);
+	const config2 = {
+		headers: { //'content-type': 'multipart/form-data',
+			'Access-Token': tokenJSON.access_token,
+			'Content-Type': 'application/json',
+	  },
+		timeout: 10000,
+		//responseType:'text'
+	}
 
-				axios.post('http://test-mobile.neo-fusion.com/data/'+data.id+'/update', data2, config)
-						this.getTweets();
-		}).catch((error) => {
-		console.log("Error gelondongan = "+error); 
+	var data2 = new FormData();
+	axios.post('http://test-mobile.neo-fusion.com/data/create', data, config)
+	.then(response => {
+			//this.storeID(response.data.id);
+			//console.log(JSON.parse(response.data.id));
+			 axios.post('https://test-mobile.neo-fusion.com/data/'+response.data.id+'/update',{
+				body: JSON.stringify({
+					'summary': this.state.tweet,
+					'detail': this.state.tweet,
+				}).
+				
+				data2.append('summary', this.state.tweet).
+				data2.append('detail', this.state.tweet)
+				
+			},config);
+			alert(response.data.id);
+		})
+		.then(res => console.log(res.data))
+	  .catch((error) => {
+	  console.log("Error gelondongan = "+error); 
 		});
-		this.getTweets();
-		alert(this.state.tweet);
+	  this.getTweets();
   }
 
 	render() {
@@ -241,13 +260,14 @@ getToken = async () => {
 							style = {styles.twit}
 							multiline={true} placeholder="What's Happening ?"
 							autoGrow={true} maxLength={150} 
-							onChangeText={this.onChangeTweet}
 							value={this.state.tweet}
+							onChangeText={(text)=>this.setState({tweet: text})}
 						/>
 
 						<Button style = {styles.btnTwit} onPress={this.handleSubmit} full>
 							<Text>TWIT</Text>
 						</Button> 
+						<Text>{this.state.tweet}</Text>
 					</Form>
 					{this.state.tweets}
 				</Content>
