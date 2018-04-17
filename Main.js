@@ -80,6 +80,7 @@ export default class Main extends Component {
 					imageType: type,
 					imageOrigUrl: origUrl,
 					imageUri: uri,
+					imageText: "Add Img Success"
 				  });
 				  console.log("imageData:"+this.state.imageData);
 				  console.log("imageFilename:"+this.state.imageFilename);
@@ -92,17 +93,13 @@ export default class Main extends Component {
 	}
 	
 	async getTweets(){
+		this.changeImgNull();
 		let token = await AsyncStorage.getItem('access_token');
 		tokenJSON = JSON.parse(token);
 		console.log("token getTweets = "+tokenJSON.access_token);
 		fetch('https://test-mobile.neo-fusion.com/data', {
 				method: 'GET',
 				headers: {
-					//'Access-Token': 'e9c08727-7730-4077-965c-229168cabd84',
-					//'Access-Token': ACCESS_TOKEN
-					//'Access-Token': localStorage.getItem('access'),
-					//'Access-Token': this.getToken
-					//'Access-Token': AsyncStorage.getItem('token')
 					'Access-Token': tokenJSON.access_token,
 				}
 	}).then(results => results.json()).then(data => {let tweets = data.map((item)=>{
@@ -119,13 +116,13 @@ export default class Main extends Component {
 							</Left>
 						</CardItem>
 						<CardItem cardBody>
-							<Image style={{width: 50, height: 50}} source={{uri: item.thumbnail_url}}/>
-							<Body>
-								<Text>
-									{item.summary}
-								</Text>
-							</Body>
+							<Image style={styles.imgContent} source={{uri: item.thumbnail_url}}/>
 						</CardItem>
+						<Body>
+							<Text style={styles.textContent}>
+								{item.summary}
+							</Text>
+						</Body>
 					</Card>
 				</View>
 				);
@@ -143,15 +140,15 @@ componentDidMount() {
 	this.getTweets();
 }
 
-onChangeTweet(e){
-	this.setState({tweet: e.target.value});
-}
+onChangeTweet = val => {
+	this.setState({
+		tweet: val
+	});
+};
 
 getToken = async () => {
 	try{
 	  let token =  await AsyncStorage.getItem('token');
-	  //ACCESS_TOKEN = token;
-	  //alert("get token main" + ACCESS_TOKEN);
 	  console.log(token);
 	  return token;
 	}catch(error){
@@ -171,62 +168,26 @@ getToken = async () => {
 	let id = await AsyncStorage.getItem('id');
 	tokenJSON = JSON.parse(token);
 	console.log('token: ' + JSON.stringify(tokenJSON));
-	/*
-	RNFetchBlob.fetch('POST', 'http://test-mobile.neo-fusion.com/data/create', {
-	  'Content-Type': 'multipart/form-data',
-	  'Access-Token': tokenJSON.access_token,
-	  }, [
-	  { name : 'photo', 
-	  filename : this.state.imageFilename, 
-	  type:this.state.imageType, 
-	  data: this.state.imageData},
-	  ]).then((response) => response.json()).then((data)=>{
-		console.log("response create twit = "+JSON.stringify(data));
-	  fetch('https://test-mobile.neo-fusion.com/data/'+data.id+'/update', {
-		method: 'POST',
-		headers: {
-		  'Content-Type': 'application/json',
-		  'Access-Token': tokenJSON.access_token,
-		},
-		body: JSON.stringify({
-		  'summary': this.state.tweet,
-		  'detail': this.state.tweet,
-		})
-	  }).then(response => response.json()).then((data =>{
-		this.getTweets();
-	  }))
-	  })
-	  .catch((err) => {
-	  console.error(err);
-	  })
-	  */
 	var data = new FormData();
 	data.append('file', {uri: this.state.imageUri, name: this.state.imageFilename, type: this.state.imageType});
   
 	const config = {
-	  headers: { //'content-type': 'multipart/form-data',
+	  headers: { 
 			'Access-Token': tokenJSON.access_token
 	  },
 	  timeout: 10000
 	}
 	const config2 = {
-		headers: { //'content-type': 'multipart/form-data',
+		headers: { 
 			'Access-Token': tokenJSON.access_token,
 			'Content-Type': 'application/json',
 	  },
 		timeout: 10000,
-		//responseType:'text'
 	}
 	let message = this.state.tweet;
 	var res_msg;
 	axios.post('http://test-mobile.neo-fusion.com/data/create', data, config)
-	  .then(response => {
-			//this.storeID(response.data.id);
-			//console.log(JSON.parse(response.data.id));
-			/*return axios.post('https://test-mobile.neo-fusion.com/data/'+response.data.id+'/update',{
-				'summary': this.state.tweet,
-				'detail': this.state.tweet,
-			},config2);*/
+	.then(response => {
 			return axios({
 				url:'https://test-mobile.neo-fusion.com/data/'+response.data.id+'/update',
 				data: {
@@ -246,14 +207,19 @@ getToken = async () => {
 	  console.log("Error gelondongan = "+error); 
 		});
 	  
+	}
+	
+	changeImgNull() {
+    console.log('state changed!');
+    this.setState({
+			imageUri: null,
+			imageText: null
+    });
   }
 
 	render() {
 		return (
 			<Container style={{padding: 20}}>		
-				<View>
-					<Image source={{uri: this.state.imageUri}} style={styles.previewImage}  />
-				</View>
 				<Content>
 					<Form>
 						<Button title = "Pick Image" onPress = {this.pickImageHandler}>
@@ -267,6 +233,9 @@ getToken = async () => {
 							value={this.state.tweet}
 							onChangeText={(text)=>this.setState({tweet: text})}
 						/>
+						<Text style={styles.txtSuccess}>
+							{this.state.imageText}
+						</Text>
 
 						<Button style = {styles.btnTwit} onPress={this.handleSubmit} full>
 							<Text>TWIT</Text>
@@ -288,7 +257,20 @@ const styles = StyleSheet.create({
 		marginBottom: 20
 	},
 	previewImage: {
-		width: "50%",
-		height: "50%"
+		width: "100%",
+		height: "30%"
+	},
+	txtSuccess:{
+		margin: 3,
+		marginBottom: 6
+	},
+	imgContent: {
+		height: 100,
+		width: 100,
+		marginLeft: 10,
+	},
+	textContent: {
+		marginTop: 20,
+		marginBottom:30
 	}
 })
