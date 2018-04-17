@@ -45,9 +45,20 @@ export class Logout extends React.Component{
     }
 }
 export class Tabss extends React.Component{
-
-    componentDidMount(){
+    async removeToken(){
+        try{
+          await AsyncStorage.setItem(ACCESS_TOKEN, "logout");
+        }catch(error){
+          console.log("something went wrong store token login");
+        }
+      }
+    async componentDidMount(){
         this.checkLogin();
+        let token = await AsyncStorage.getItem(ACCESS_TOKEN);
+        if(token===""){
+            this.removeToken();
+            Actions.login();
+        }
     }
     async checkLogin(){
     AsyncStorage.getItem('token').then((val) =>{
